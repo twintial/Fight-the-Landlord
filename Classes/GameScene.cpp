@@ -1,5 +1,6 @@
 #include"GameScene.h"
 #include"PokerCard.h"
+USING_NS_CC;
 Scene* GameScene::CreateScene()
 {
 	return GameScene::create();
@@ -13,30 +14,13 @@ bool GameScene::init()
 	this->addChild(background);
 
 
-	PokerCard a = PokerCard(23);
+	PokerCard a = PokerCard(15);
 	a.card_picture->setPosition(visibleSize / 2);
 	addChild(a.card_picture);
 	PokerCard::ClickTrigger(a);
 	return true;
 }
-void GameScene::CardShuffle(vector<int>card)
+void GameScene::PointButton()
 {
-	for (int i = 0; i <= 54; i++)
-	{
-		card.push_back(i);
-	}
-	random_shuffle(card.begin() + 1, card.end());
+
 }
-void GameScene::CardDeal(Player* a, Player* b, Player* c)
-{
-	for (int i = 0; i < 51;)
-	{
-		i++;
-		a->hand.push_back(card[i]);
-		i++;
-		b->hand.push_back(card[i]);
-		i++;
-		c->hand.push_back(card[i]);
-	}
-}
-vector<int>GameScene::card;
