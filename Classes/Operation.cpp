@@ -100,5 +100,4 @@ void Operation::CardSort(Player& x)
 		}
 	}//大小王排序
 	x.hand = hand_temp;
-	vector<int>(hand_temp).swap(hand_temp);//释放内存
 }
