@@ -1,5 +1,7 @@
 #include"cocos2d.h"
 #include"vector"
+#include<PokerCard.h>
+#pragma once
 using namespace std;
 class Player
 {
@@ -11,5 +13,5 @@ public:
 	friend class Operation;
 	friend class GameScene;
 	Player();
-	Player operator= (const Player&);
+	Player &operator= (Player&);
 };

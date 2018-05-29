@@ -1,5 +1,6 @@
 #include<iostream>
 #include<cocos2d.h>
+#pragma once
 using namespace cocos2d;
 class PokerCard
 {
@@ -14,6 +15,8 @@ public:
 	void ClickIn()const;
 	static void ClickTrigger(PokerCard);
 	friend class GameScene;
+	friend class Operation;
 	~PokerCard();
 };
+ 
 

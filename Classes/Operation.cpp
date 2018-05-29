@@ -1,6 +1,6 @@
 #include<Operation.h>
 USING_NS_CC;
-void Operation::Snatchlord(Player a, Player b, Player c)//正确性待检验
+void Operation::Snatchlord(Player& a, Player& b, Player& c)//正确性待检验
 {
 	int max_point = 0;
 	srand((int)time(0));
@@ -15,7 +15,7 @@ void Operation::Snatchlord(Player a, Player b, Player c)//正确性待检验
 		{
 			now_snatch -= 3;
 		}
-		LordPoint(mapPlayer[now_snatch]);//通知这名玩家抢地主
+		LordPoint(mapPlayer[now_snatch]);//通知这名玩家抢地主并获取玩家的地主分数Player::Lordpoint
 		if (mapPlayer[now_snatch].lord_point == 3)
 		{
 			Lord = mapPlayer[now_snatch];
@@ -40,24 +40,65 @@ void Operation::LordPoint(Player)
 {
 
 }
-void Operation::CardShuffle(vector<int>card)
+void Operation::CardShuffle(vector<int>&card)
 {
-	for (int i = 0; i <= 54; i++)
+	srand(unsigned(time(NULL)));
+	for (int i = 0; i <= 53; i++)
 	{
 		card.push_back(i);
 	}
-	random_shuffle(card.begin() + 1, card.end());
+	random_shuffle(card.begin(), card.end());
 }
-void Operation::CardDeal(Player* a, Player* b, Player* c)
+void Operation::CardDeal(Player& a, Player& b, Player& c, vector<int>&card)
 {
 	for (int i = 0; i < 51;)
 	{
+		a.hand.push_back(card[i]);
 		i++;
-		a->hand.push_back(card[i]);
+		b.hand.push_back(card[i]);
 		i++;
-		b->hand.push_back(card[i]);
+		c.hand.push_back(card[i]);
 		i++;
-		c->hand.push_back(card[i]);
 	}
 }
-vector<int>Operation::card;
+void Operation::CardSort(Player& x)
+{
+	sort(x.hand.begin(), x.hand.end());
+	vector<int>hand_temp;
+	for (int i = 2; i <= 12; i++)
+	{
+		for (int j = 0; j <= x.hand.size() - 1; j++)
+		{
+			if (x.hand[j] % 13 == i && x.hand[j] <= 51)
+			{
+				hand_temp.push_back(x.hand[j]);
+			}
+		}
+	}
+	for (int i = 0; i <= 1; i++)
+	{
+		for (int j = 0; j <= x.hand.size() - 1; j++)
+		{
+			if (x.hand[j] % 13 == i && x.hand[j] <= 51)
+			{
+				hand_temp.push_back(x.hand[j]);
+			}
+		}
+	}//3-k-1-2的排序
+	for (int i = 0; i <= x.hand.size() - 1; i++)
+	{
+		if (x.hand[i] == 52)
+		{
+			hand_temp.push_back(x.hand[i]);
+		}
+		else
+		{
+			if (x.hand[i] == 53 && hand_temp.size() == 16)
+			{
+				hand_temp.push_back(x.hand[i]);
+			}
+		}
+	}//大小王排序
+	x.hand = hand_temp;
+	vector<int>(hand_temp).swap(hand_temp);//释放内存
+}
