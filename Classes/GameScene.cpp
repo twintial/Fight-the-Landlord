@@ -39,16 +39,16 @@ void GameScene::ArrangePokers_1(Player x)
 	{
 		poker.push_back(PokerCard(x.hand[i]));
 	}
-	poker[0].card_picture->setPosition(200, 150);
-	size_t cx = poker[0].card_picture->getPositionX();
-	for (int i = 0; i <= poker.size() - 1; i++)
+	poker[poker.size() - 1].card_picture->setPosition(210, 150);
+	size_t cx = poker[poker.size() - 1].card_picture->getPositionX();
+	for (int i = poker.size() - 1; i >= 0; i--)
 	{
-		poker[i].card_picture->setPosition(cx + 50 * i, 150);
+		poker[i].card_picture->setPosition(cx + 50 * (poker.size() - 1 - i), 150);
 	}
 	for (int i = 0; i <= 16; i++)
 	{
 		PokerCard::ClickTrigger(poker[i]);
-		addChild(poker[i].card_picture);
+		addChild(poker[i].card_picture, poker.size() - 1 - i);
 	}
 }
 vector<int>GameScene::card;
