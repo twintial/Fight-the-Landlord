@@ -11,7 +11,11 @@ private:
 public:
 	static cocos2d::Scene* CreateScene();
 	virtual bool init();
-	void PointButton();
-	void ArrangePokers_1(Player);
+	Sprite* PointButton_0();
+	Sprite* SkipButton();
+	Sprite* PlayButton();
+	void ArrangePokers_1(Player&);
+	void timehandle(float t);//
+	void ArrangeoutPokers(Player&);
 	CREATE_FUNC(GameScene);
 };

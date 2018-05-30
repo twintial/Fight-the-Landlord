@@ -11,8 +11,8 @@ private:
 public:
 	void LordPoint(Player);
 	void Snatchlord(Player& a, Player& b, Player& c);
-	void ArrangePokers_1(Player*);
 	static void CardShuffle(vector<int>&card);
 	static void CardDeal(Player& a, Player& b, Player& c, vector<int>&card);
 	static void CardSort(Player&);
+	static void Action(Sprite*, Sprite*, Player&);
 };

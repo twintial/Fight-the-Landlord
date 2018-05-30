@@ -7,6 +7,7 @@ class Player
 {
 private:
 	vector<int>hand;
+	vector<PokerCard> handpoker;
 	int status;
 	int lord_point;
 public:

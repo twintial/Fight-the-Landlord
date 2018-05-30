@@ -101,3 +101,58 @@ void Operation::CardSort(Player& x)
 	}//´óÐ¡ÍõÅÅÐò
 	x.hand = hand_temp;
 }
+void Operation::Action(Sprite* skipbutton, Sprite*playbutton, Player& x)
+{
+	auto listener_skip = EventListenerTouchOneByOne::create();
+	listener_skip->onTouchBegan = [skipbutton, listener_skip](Touch *t, Event *e)
+	{
+		if (skipbutton->getBoundingBox().containsPoint(t->getLocation()))
+		{
+			listener_skip->setSwallowTouches(true);
+		}
+		return true;
+	};
+	listener_skip->onTouchEnded = [skipbutton, playbutton, listener_skip](Touch *t, Event *e)
+	{
+		if (skipbutton->getBoundingBox().containsPoint(t->getLocation()))
+		{
+			skipbutton->removeFromParent();
+			playbutton->removeFromParent();
+		}
+		listener_skip->setSwallowTouches(false);
+	};
+	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener_skip, skipbutton);
+	//skip
+
+
+	auto listener_play = EventListenerTouchOneByOne::create();
+	listener_play->onTouchBegan = [playbutton, listener_play](Touch *t, Event *e)
+	{
+		if (playbutton->getBoundingBox().containsPoint(t->getLocation()))
+		{
+			listener_play->setSwallowTouches(true);
+		}
+		return true;
+	};
+	listener_play->onTouchEnded = [skipbutton, playbutton, &x, listener_play](Touch *t, Event *e)
+	{
+		if (playbutton->getBoundingBox().containsPoint(t->getLocation()))
+		{
+			for (int i = 0; i <= x.handpoker.size() - 1; i++)
+			{
+				if (x.handpoker[i].iostates == 1)
+				{
+					x.handpoker[i].card_picture->removeFromParent();
+					skipbutton->removeFromParent();
+					playbutton->removeFromParent();
+					
+					/*x.handpoker.erase(x.handpoker.begin() + i);*/
+					x.handpoker[i].iostates = 0;
+				}
+			}
+		}
+		listener_play->setSwallowTouches(false);
+	};
+	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener_play, playbutton);
+	//play
+}//remain
