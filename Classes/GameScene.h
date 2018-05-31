@@ -1,3 +1,6 @@
+#ifndef  _GAME_SCENE_H_
+#define  _GAME_SCENE_H_
+
 #include<cocos2d.h>
 #include<vector>
 #include <algorithm>
@@ -16,6 +19,8 @@ public:
 	Sprite* PlayButton();
 	void ArrangePokers_1(Player&);
 	void timehandle(float t);//
-	void ArrangeoutPokers(Player&);
+	bool ArrangeoutPokers(Player*);
+	void ArrangePokers_afterplay(Player* x);
 	CREATE_FUNC(GameScene);
 };
+#endif

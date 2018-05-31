@@ -25,7 +25,7 @@ bool GameScene::init()
 	auto sb = SkipButton();
 	auto pb = PlayButton();
 	//schedule(schedule_selector(GameScene::timehandle),2);
-	Operation::Action(sb, pb, *a);
+	a->Action(sb, pb, this);
 	return true;
 }
 void GameScene::timehandle(float t)
@@ -64,11 +64,11 @@ void GameScene::ArrangePokers_1(Player& x)
 	{
 		x.handpoker.push_back(PokerCard(x.hand[i]));
 	}
-	x.handpoker[x.handpoker.size() - 1].card_picture->setPosition(210, 150);//set left poker
-	size_t cx = x.handpoker[x.handpoker.size() - 1].card_picture->getPositionX();
-	for (int i = x.handpoker.size() - 1; i >= 0; i--)
+	x.handpoker[x.handpoker.size() / 2].card_picture->setPosition(visibleSize.width / 2, 150);//set left poker
+	size_t cx = x.handpoker[x.handpoker.size() / 2].card_picture->getPositionX();
+	for (int i = 0; i <= x.handpoker.size() - 1; i++)
 	{
-		x.handpoker[i].card_picture->setPosition(cx + 50 * (x.handpoker.size() - 1 - i), 150);
+		x.handpoker[i].card_picture->setPosition(cx - 50 * (i - (x.handpoker.size() / 2)), 150);
 	}
 	for (int i = 0; i <= 16; i++)
 	{
@@ -76,12 +76,42 @@ void GameScene::ArrangePokers_1(Player& x)
 		addChild(x.handpoker[i].card_picture, x.handpoker.size() - 1 - i);
 	}
 }
-void GameScene::ArrangeoutPokers(Player& x)
+void GameScene::ArrangePokers_afterplay(Player* x)
 {
-	for (int i = 0; i <= 16; i++)
+	for (int i = 0; i <= x->handpoker.size() - 1; i++)
 	{
-		x.handpoker[i].m_card_picture->setPosition(500, 500);
-		addChild(x.handpoker[i].m_card_picture);
+		if (x->handpoker[i].played == 1)
+		{
+			for (int j = 0; j <= x->handpoker.size() - 1; j++)
+			{
+				if (x->handpoker[j].played == 0)
+				{
+					int delta = j < i ? -1 : 1;
+					x->handpoker[j].card_picture->runAction(MoveBy::create(0.01, Point(delta * 25, 0)));
+				}
+			}
+			x->handpoker[i].played = -1;
+		}
 	}
+}
+bool GameScene::ArrangeoutPokers(Player* x)
+{
+	if (x->outpoker.size() == 0)
+	{
+		return false;
+	}
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	x->outpoker[x->outpoker.size() / 2].m_card_picture->setPosition(visibleSize.width / 2, 300);
+	size_t cx = x->outpoker[x->outpoker.size() / 2].m_card_picture->getPositionX();
+	for (int i = 0; i <= x->outpoker.size() - 1; i++)
+	{
+		x->outpoker[i].m_card_picture->setPosition(cx + 30 * (i - (x->outpoker.size() / 2)), 300);
+	}
+	for (int i = 0; i <= x->outpoker.size() - 1; i++)
+	{
+		addChild(x->outpoker[i].m_card_picture);
+	}
+	x->outpoker.erase(x->outpoker.begin(), x->outpoker.end());//在以后需要改动
+	return true;
 }
 vector<int>GameScene::card;

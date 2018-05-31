@@ -3,6 +3,7 @@ USING_NS_CC;
 PokerCard::PokerCard(int num)
 {
 	iostates = 0;
+	played = 0;
 	if (num <= 51)
 	{
 		card_number = num % 13 + 1;

@@ -1,6 +1,8 @@
+#ifndef _POKER_CARD_H_
+#define _POKER_CARD_H_
+
 #include<iostream>
 #include<cocos2d.h>
-#pragma once
 using namespace cocos2d;
 using namespace std;
 class PokerCard
@@ -9,6 +11,7 @@ private:
 	int card_number;
 	int kind;
 	mutable int iostates;
+	int played;//0表示在手牌中,1表示被打出,-1表示已经将此牌的间隙补上,并且再也不会使用此牌
 	Sprite* card_picture;
 	Sprite* m_card_picture;
 public:
@@ -18,7 +21,7 @@ public:
 	void ClickTrigger();
 	friend class GameScene;
 	friend class Operation;
+	friend class Player;
 	~PokerCard();
 };
- 
-
+#endif
