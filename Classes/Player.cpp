@@ -58,8 +58,9 @@ void Player::Action(Sprite* skipbutton, Sprite* playbutton,GameScene* scene)
 			}
 			//skipbutton->removeFromParent();
 			//playbutton->removeFromParent();
+
 			scene->ArrangeoutPokers(this);
-			scene->ArrangePokers_afterplay(this);
+			scene->ArrangeHandPokers_afterplay(this);
 		}
 		listener_play->setSwallowTouches(false);
 	};

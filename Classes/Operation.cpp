@@ -101,3 +101,128 @@ void Operation::CardSort(Player& x)
 	}//大小王排序
 	x.hand = hand_temp;
 }
+void Operation::OutCardSort(Player& x)
+{
+	int max = 0;
+	int maxnum = 0;
+	vector<int>num(16);//记录每个数字各出现了几次
+	for (int i = 0; i <= x.outpoker.size() - 1; i++)
+	{
+		num[x.outpoker[i].card_number]++;
+	}
+	vector<PokerCard>temp;
+	for (int i = 0; i <= x.outpoker.size() - 1; i++)
+	{
+		if (num[x.outpoker[i].card_number] == 4)
+		{
+			temp.push_back(x.outpoker[i]);
+		}
+	}
+	for (int i = 0; i <= x.outpoker.size() - 1; i++)
+	{
+		if (num[x.outpoker[i].card_number] == 3)
+		{
+			temp.push_back(x.outpoker[i]);
+		}
+	}
+	for (int i = 0; i <= x.outpoker.size() - 1; i++)
+	{
+		if (num[x.outpoker[i].card_number] == 2)
+		{
+			temp.push_back(x.outpoker[i]);
+		}
+	}
+	for (int i = 0; i <= x.outpoker.size() - 1; i++)
+	{
+		if (num[x.outpoker[i].card_number] == 1)
+		{
+			temp.push_back(x.outpoker[i]);
+		}
+	}
+	x.outpoker = temp;
+}
+int Operation::CardType(Player& x)
+{
+	OutCardSort(x);
+	enum CardType
+	{
+		ERROR_TYPE = 0,
+		SINGLE_CARD,//单牌
+		PAIR,//对子
+		TRIPLET,//葫芦
+		TRIPLET_SINGLE,//三带一
+		TRIPLET_PAIR,//三带二
+		SEQUENCE,//顺子
+		SEQUENCE_OF_PAIR,//连对
+		SEQUENCE_OF_TRIPLET,//飞机
+		SEQUENCE_OF_TRIPLET_SINGLE,
+		SEQUENCE_OF_TRIPLET_PAIR,
+		BOMB,//炸弹
+		ROCKET,//王炸
+		QUADPLEX_TWO_SINGLE,//四带一
+		QUADPLEX_TWO_PAIR,//四带二
+	};
+	if (x.outpoker.size() == 1)
+	{
+		return SINGLE_CARD;
+	}
+
+	if (x.outpoker.size() == 2)
+	{
+		if (x.outpoker[0].card_number == x.outpoker[1].card_number)
+		{
+			return PAIR;
+		}
+		else if (x.outpoker[0].card_number == 52 && x.outpoker[1].card_number == 53)
+		{
+			return ROCKET;
+		}
+	}
+
+	if (x.outpoker.size() == 3 && x.outpoker[0].card_number == x.outpoker[1].card_number&&x.outpoker[1].card_number == x.outpoker[2].card_number)
+	{
+		return TRIPLET;
+	}
+
+	if (x.outpoker.size() == 4)
+	{
+		if (x.outpoker[0].card_number == x.outpoker[1].card_number&&x.outpoker[1].card_number == x.outpoker[2].card_number)
+		{
+			if (x.outpoker[0].card_number == x.outpoker[3].card_number)
+			{
+				return BOMB;
+			}
+			else
+			{
+				return TRIPLET_SINGLE;
+			}
+		}
+	}
+
+	if (x.outpoker.size() >= 5)
+	{
+		int flag = 0;
+		for (int i = 0; i <= x.outpoker.size() - 2; i++)
+		{
+			if (x.outpoker[i].card_number + 1 != x.outpoker[i + 1].card_number)
+			{
+				flag = 1;
+				break;
+			}
+		}
+		if (!flag)
+		{
+			return SEQUENCE;
+		}
+	}
+
+	if (x.outpoker.size() == 5)
+	{
+		if (x.outpoker[0].card_number == x.outpoker[1].card_number&&x.outpoker[1].card_number == x.outpoker[2].card_number&&x.outpoker[3].card_number == x.outpoker[4].card_number)
+		{
+			return TRIPLET_PAIR;
+		}
+	}
+
+	return ERROR_TYPE;
+}

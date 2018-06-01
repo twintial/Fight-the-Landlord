@@ -20,7 +20,7 @@ public:
 	void ArrangePokers_1(Player&);
 	void timehandle(float t);//
 	bool ArrangeoutPokers(Player*);
-	void ArrangePokers_afterplay(Player* x);
+	void ArrangeHandPokers_afterplay(Player* x);
 	CREATE_FUNC(GameScene);
 };
 #endif

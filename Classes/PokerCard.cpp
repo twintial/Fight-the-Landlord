@@ -12,6 +12,14 @@ PokerCard::PokerCard(int num)
 	{
 		card_number = num;
 	}
+	if (card_number == 1)
+	{
+		card_number += 13;
+	}
+	if (card_number == 2)
+	{
+		card_number += 20;
+	}
 	//ÅÆÃæÊı×Ö
 	if (num <= 51)
 	{

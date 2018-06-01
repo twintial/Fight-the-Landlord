@@ -17,5 +17,7 @@ public:
 	static void CardShuffle(vector<int>&card);
 	static void CardDeal(Player& a, Player& b, Player& c, vector<int>&card);
 	static void CardSort(Player&);
+    static void OutCardSort(Player&);
+	static int CardType(Player&);
 };
 #endif

@@ -76,7 +76,7 @@ void GameScene::ArrangePokers_1(Player& x)
 		addChild(x.handpoker[i].card_picture, x.handpoker.size() - 1 - i);
 	}
 }
-void GameScene::ArrangePokers_afterplay(Player* x)
+void GameScene::ArrangeHandPokers_afterplay(Player* x)
 {
 	for (int i = 0; i <= x->handpoker.size() - 1; i++)
 	{
