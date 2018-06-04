@@ -29,8 +29,8 @@ void StartScene::SettingBackgroud()
 void StartScene::StartButton()
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
-	auto background = Sprite::create("start.png");
-	auto menuitem = MenuItemSprite::create(background, background, CC_CALLBACK_1(StartScene::EnterChooseScene, this));
+	auto button = Sprite::create("start.png");
+	auto menuitem = MenuItemSprite::create(button, button, CC_CALLBACK_1(StartScene::EnterChooseScene, this));
 	auto menu = Menu::create(menuitem, NULL);
 	menu->setPosition(visibleSize / 2);
 	this->addChild(menu);

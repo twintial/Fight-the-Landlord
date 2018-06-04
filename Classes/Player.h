@@ -2,7 +2,8 @@
 #define _PLAYER_H_
 
 #include"cocos2d.h"
-#include"vector"
+#include<vector>
+#include<string>
 #include"PokerCard.h"
 #include"GameScene.h"
 using namespace std;
@@ -18,6 +19,7 @@ private:
 	vector<int>hand;
 	vector<PokerCard> handpoker;
 	vector<PokerCard> outpoker;
+	string username;
 	int status;//农民和地主的情况
 	int lord_point;
 };
