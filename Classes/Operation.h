@@ -9,8 +9,6 @@
 using namespace std;
 class Operation
 {
-private:
-	//Player Lord;
 public:
 	void LordPoint(Player);
 	void Snatchlord(Player& a, Player& b, Player& c);
@@ -19,5 +17,7 @@ public:
 	static void CardSort(Player&);
     static void OutCardSort(Player&);
 	static int CardType(Player&);
+private:
+	//Player Lord;
 };
 #endif

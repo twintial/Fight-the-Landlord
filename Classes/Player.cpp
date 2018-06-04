@@ -12,6 +12,7 @@ Player& Player::operator=(Player& x)
 }
 void Player::Action(Sprite* skipbutton, Sprite* playbutton,GameScene* scene)
 {
+	//skip
 	auto listener_skip = EventListenerTouchOneByOne::create();
 	listener_skip->onTouchBegan = [skipbutton, listener_skip](Touch *t, Event *e)
 	{
@@ -40,9 +41,8 @@ void Player::Action(Sprite* skipbutton, Sprite* playbutton,GameScene* scene)
 		listener_skip->setSwallowTouches(false);
 	};
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener_skip, skipbutton);
-	//skip
 
-
+	//play
 	auto listener_play = EventListenerTouchOneByOne::create();
 	listener_play->onTouchBegan = [playbutton, listener_play](Touch *t, Event *e)
 	{
@@ -87,5 +87,4 @@ void Player::Action(Sprite* skipbutton, Sprite* playbutton,GameScene* scene)
 		listener_play->setSwallowTouches(false);
 	};
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener_play, playbutton);
-	//play
 }//remain

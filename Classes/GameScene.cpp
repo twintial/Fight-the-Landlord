@@ -7,11 +7,12 @@ Scene* GameScene::CreateScene()
 }
 bool GameScene::init()
 {
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	auto background = Sprite::create("background.png");
-	background->setPosition(visibleSize / 2);
-	this->addChild(background);
+	if (!Scene::init())
+	{
+		return false;
+	}
+
+	Settingbackgroud();
 	//test
 	auto a = new Player();
 	auto b = new Player();
@@ -27,6 +28,14 @@ bool GameScene::init()
 	//schedule(schedule_selector(GameScene::timehandle),2);
 	a->Action(sb, pb, this);
 	return true;
+}
+void GameScene::Settingbackgroud()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	auto background = Sprite::create("background.png");
+	background->setPosition(visibleSize / 2);
+	this->addChild(background);
 }
 void GameScene::timehandle(float t)
 {

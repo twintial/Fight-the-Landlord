@@ -166,12 +166,10 @@ int Operation::CardType(Player& x)
 		return ERROR_TYPE;
 	}
 	OutCardSort(x);
-
 	if (x.outpoker.size() == 1)
 	{
 		return SINGLE_CARD;
 	}
-
 	if (x.outpoker.size() == 2)
 	{
 		if (x.outpoker[0].card_number == x.outpoker[1].card_number)
@@ -183,12 +181,10 @@ int Operation::CardType(Player& x)
 			return ROCKET;
 		}
 	}
-
 	if (x.outpoker.size() == 3 && x.outpoker[0].card_number == x.outpoker[1].card_number&&x.outpoker[1].card_number == x.outpoker[2].card_number)
 	{
 		return TRIPLET;
 	}
-
 	if (x.outpoker.size() == 4)
 	{
 		if (x.outpoker[0].card_number == x.outpoker[1].card_number&&x.outpoker[1].card_number == x.outpoker[2].card_number)
@@ -203,7 +199,6 @@ int Operation::CardType(Player& x)
 			}
 		}
 	}
-
 	if (x.outpoker.size() >= 5)
 	{
 		int flag = 0;
@@ -220,7 +215,6 @@ int Operation::CardType(Player& x)
 			return SEQUENCE;
 		}
 	}//顺子
-
 	if (x.outpoker.size() >= 6 && x.outpoker.size() % 2 == 0)
 	{
 		int flag = 0;
@@ -245,7 +239,6 @@ int Operation::CardType(Player& x)
 			return SEQUENCE_OF_PAIR;
 		}
 	}//连对
-
 	if (x.outpoker.size() == 5)
 	{
 		if (x.outpoker[0].card_number == x.outpoker[1].card_number&&x.outpoker[1].card_number == x.outpoker[2].card_number&&x.outpoker[3].card_number == x.outpoker[4].card_number)
@@ -253,7 +246,6 @@ int Operation::CardType(Player& x)
 			return TRIPLET_PAIR;
 		}
 	}
-
 	if (x.outpoker.size() >= 6 && x.outpoker.size() % 3 == 0)
 	{
 		int flag = 0;
@@ -278,7 +270,6 @@ int Operation::CardType(Player& x)
 			return SEQUENCE_OF_TRIPLET;
 		}
 	}//飞机
-
 	if (x.outpoker.size() >= 8 && x.outpoker.size() % 4 == 0)
 	{
 		int flag = 0;
@@ -296,7 +287,6 @@ int Operation::CardType(Player& x)
 			return SEQUENCE_OF_TRIPLET_SINGLE;
 		}
 	}
-
 	if (x.outpoker.size() >= 10 && x.outpoker.size() % 5 == 0)
 	{
 		int flag = 0;
@@ -322,7 +312,6 @@ int Operation::CardType(Player& x)
 			return SEQUENCE_OF_TRIPLET_PAIR;
 		}
 	}
-
 	if (x.outpoker.size() == 8)
 	{
 		if (x.outpoker[0].card_number == x.outpoker[1].card_number&&x.outpoker[1].card_number == x.outpoker[2].card_number&&x.outpoker[2].card_number == x.outpoker[3].card_number)

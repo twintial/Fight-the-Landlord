@@ -8,17 +8,17 @@
 using namespace std;
 class Player
 {
-private:
-	vector<int>hand;
-	vector<PokerCard> handpoker;
-	vector<PokerCard> outpoker;
-	int status;
-	int lord_point;
 public:
 	friend class Operation;
 	friend class GameScene;
 	Player();
 	Player &operator= (Player&);
 	void Action(Sprite*, Sprite*, GameScene*);
+private:
+	vector<int>hand;
+	vector<PokerCard> handpoker;
+	vector<PokerCard> outpoker;
+	int status;//农民和地主的情况
+	int lord_point;
 };
 #endif
