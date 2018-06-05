@@ -6,6 +6,7 @@
 #include <algorithm>
 #include"Operation.h"
 #include"Player.h"
+#include"LoginScene.h"
 using namespace std;
 class GameScene:public cocos2d::Scene
 {

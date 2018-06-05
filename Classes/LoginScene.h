@@ -8,18 +8,22 @@
 #include<string>
 using namespace std;
 using namespace ui;
-class ClientLogin :public cocos2d::Scene
+class LoginScene :public cocos2d::Scene
 {
 public:
-	static cocos2d::Scene* CreateScene();
+	static Player* local;
+	static cocos2d::Scene* CreateHost();
+	static cocos2d::Scene* CreateGuest();
 	virtual bool init();
 	void InputUsername();
 	void InputConnectIP();
+	void EnterGameScene(Ref *pSender);
 	void OKbutton();
-	CREATE_FUNC(ClientLogin);
+	int GetLocalIP();
+	CREATE_FUNC(LoginScene);
 	void timehandle(float t);//
 private:
-	string IP;
+	static size_t state;
 };
 
 #endif

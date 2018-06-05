@@ -2,6 +2,8 @@
 USING_NS_CC;
 Player::Player()
 {
+	IP = "";
+	username = "";
 	vector<int>hand;
 	status = -1;
 	lord_point = -1;

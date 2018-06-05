@@ -1,26 +1,42 @@
-#include<ClientLogin.h>
+#include<LoginScene.h>
 USING_NS_CC;
-Scene* ClientLogin::CreateScene()
+Scene* LoginScene::CreateHost()
 {
-	return ClientLogin::create();
+	local = new Player();
+	state = 1;
+	return LoginScene::create();
 }
-bool ClientLogin::init()
+Scene* LoginScene::CreateGuest()
+{
+	local = new Player();
+	state = 0;
+	return LoginScene::create();
+}
+bool LoginScene::init()
 {
 	if (!Scene::init())
 	{
 		return false;
 	}
+
 	InputUsername();
-	InputConnectIP();
+	if (!state)
+	{
+		InputConnectIP();//作为guest连接hostIP
+	}
+	else
+	{
+		GetLocalIP();//作为host连接本地IP
+	}
 	OKbutton();
-	//schedule(schedule_selector(ClientLogin::timehandle),2);
+	schedule(schedule_selector(LoginScene::timehandle),2);
 	return true;
 }
-void ClientLogin::timehandle(float t)
+void LoginScene::timehandle(float t)
 {
-	log("%s",IP);
+	log("%s",local->IP.c_str());
 }//test
-void ClientLogin::InputUsername()
+void LoginScene::InputUsername()
 {
 	//添加文本框背景
 	auto visibleSize = Director::getInstance()->getVisibleSize();
@@ -51,8 +67,8 @@ void ClientLogin::InputUsername()
 		}
 		case cocos2d::ui::TextField::EventType::DETACH_WITH_IME:
 		{
-			string username = tf->getString();
-			if (username.length() == 0)
+			local->username = tf->getString();
+			if (local->username.length() == 0)
 			{
 				text->setString("Please enter your name");
 			}
@@ -68,7 +84,7 @@ void ClientLogin::InputUsername()
 
 	});
 }
-void ClientLogin::InputConnectIP()
+void LoginScene::InputConnectIP()
 {
 	//添加文本框背景
 	auto visibleSize = Director::getInstance()->getVisibleSize();
@@ -98,8 +114,8 @@ void ClientLogin::InputConnectIP()
 		}
 		case cocos2d::ui::TextField::EventType::DETACH_WITH_IME:
 		{
-			IP = tf->getString();
-			if (IP.length() == 0)
+			local->IP = tf->getString();
+			if (local->IP.length() == 0)
 			{
 				text->setString("Please enter correct IP");
 			}
@@ -115,12 +131,45 @@ void ClientLogin::InputConnectIP()
 
 	});
 }
-void ClientLogin::OKbutton()
+void LoginScene::EnterGameScene(Ref *pSender)
+{
+	if (local->IP != ""&&local->username != "")
+	{
+		Director::getInstance()->pushScene(GameScene::CreateScene());
+	}
+}
+void LoginScene::OKbutton()
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto button = Sprite::create("OKbutton.png");
-	button->setPosition(visibleSize.width / 2, visibleSize.height / 2 - 300);
-	addChild(button);
-
+	auto menuitem = MenuItemSprite::create(button, button, CC_CALLBACK_1(LoginScene::EnterGameScene, this));
+	auto menu = Menu::create(menuitem, NULL);
+	menu->setPosition(visibleSize.width / 2, visibleSize.height / 2 - 300);
+	addChild(menu);
 
 }
+int LoginScene::GetLocalIP()
+{
+	char host_name[255];
+	if (gethostname(host_name, sizeof(host_name)) == SOCKET_ERROR)
+	{
+
+		log("Error %d when getting local host name\n", WSAGetLastError());
+		return -1;
+	}
+	log("host name:%s\n", host_name);
+	struct hostent *phe = gethostbyname(host_name);
+	if (phe == 0)
+	{
+
+		log("Error host lookup\n");
+		return -1;
+	}
+
+	struct in_addr addr;
+	memcpy(&addr, phe->h_addr_list[1], sizeof(struct in_addr));
+	local->IP = inet_ntoa(addr);
+	return 1;
+}//（若创建房间则连接本地IP）获取本地IP
+size_t LoginScene::state;
+Player* LoginScene::local;

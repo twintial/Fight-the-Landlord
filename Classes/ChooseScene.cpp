@@ -17,11 +17,11 @@ bool ChooseScene::init()
 }
 void ChooseScene::StartWithServer(Ref *pSender)
 {
-	Director::getInstance()->replaceScene(ServerLogin::CreateScene());
+	Director::getInstance()->replaceScene(LoginScene::CreateHost());
 }
 void ChooseScene::StartWithClient(Ref *pSender)
 {
-	Director::getInstance()->replaceScene(ClientLogin::CreateScene());
+	Director::getInstance()->replaceScene(LoginScene::CreateGuest());
 }
 void ChooseScene::CreateButton()
 {

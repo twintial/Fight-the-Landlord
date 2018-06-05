@@ -51,7 +51,7 @@
     <ClCompile Include="..\Classes\Client.cpp">
       <Filter>src\Network</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Clientlogin.cpp">
+    <ClCompile Include="..\Classes\LoginScene.cpp">
       <Filter>src\Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\ServerLogin.cpp">
@@ -92,10 +92,10 @@
     <ClInclude Include="..\Classes\Client.h">
       <Filter>src\Network</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\ServerLogin.h">
+    <ClInclude Include="..\Classes\LoginScene.h">
       <Filter>src\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\ClientLogin.h">
+    <ClInclude Include="..\Classes\ServerLogin.h">
       <Filter>src\Scene</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,8 +2,8 @@
 #define  _CHOOSE_SCENEN_H_
 
 #include<cocos2d.h>
-#include<ServerLogin.h>
-#include<ClientLogin.h>
+
+#include<LoginScene.h>
 class ChooseScene:public cocos2d::Scene
 {
 public:

@@ -25,7 +25,7 @@ bool GameScene::init()
 	ArrangePokers_1(*a);
 	auto sb = SkipButton();
 	auto pb = PlayButton();
-	//schedule(schedule_selector(GameScene::timehandle),2);
+	schedule(schedule_selector(GameScene::timehandle),2);
 	a->Action(sb, pb, this);
 	return true;
 }
@@ -39,7 +39,7 @@ void GameScene::Settingbackgroud()
 }
 void GameScene::timehandle(float t)
 {
-
+	log("%s", LoginScene::local->IP.c_str());
 }
 Sprite* GameScene::PointButton_0()
 {

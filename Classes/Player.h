@@ -12,6 +12,7 @@ class Player
 public:
 	friend class Operation;
 	friend class GameScene;
+	friend class LoginScene;
 	Player();
 	Player &operator= (Player&);
 	void Action(Sprite*, Sprite*, GameScene*);
@@ -19,8 +20,9 @@ private:
 	vector<int>hand;
 	vector<PokerCard> handpoker;
 	vector<PokerCard> outpoker;
-	string username;
 	int status;//农民和地主的情况
 	int lord_point;
+	string username;
+	string IP;
 };
 #endif
