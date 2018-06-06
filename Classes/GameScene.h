@@ -7,6 +7,7 @@
 #include"Operation.h"
 #include"Player.h"
 #include"LoginScene.h"
+#include"Client.h"
 #include"Server.h"
 using namespace std;
 class GameScene:public cocos2d::Scene
@@ -17,6 +18,7 @@ public:
 	Sprite* PointButton_0();
 	Sprite* SkipButton();
 	Sprite* PlayButton();
+	void ReadyButton();
 	void Settingbackgroud();
 	void ArrangePokers_1(Player&);
 	void timehandle(float t);//

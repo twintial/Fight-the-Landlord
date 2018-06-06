@@ -169,7 +169,7 @@ int LoginScene::GetLocalIP()
 	}
 
 	struct in_addr addr;
-	memcpy(&addr, phe->h_addr_list[1], sizeof(struct in_addr));
+	memcpy(&addr, phe->h_addr_list[0], sizeof(struct in_addr));
 	local->IP = inet_ntoa(addr);
 	return 1;
 }//（若创建房间则连接本地IP）获取本地IP

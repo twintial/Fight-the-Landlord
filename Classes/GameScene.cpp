@@ -1,9 +1,10 @@
 #include"GameScene.h"
 #include"PokerCard.h"
 USING_NS_CC;
-
+Client * local_client;
 Scene* GameScene::CreateScene()
 {
+	local_client = new Client(LoginScene::local);
 	return GameScene::create();
 }
 bool GameScene::init()
@@ -13,24 +14,22 @@ bool GameScene::init()
 		return false;
 	}
 
-	Settingbackgroud();
-	////test
-	//auto a = new Player();
-	//auto b = new Player();
-	//auto c = new Player();
-	//Operation::CardShuffle(card);
-	//Operation::CardDeal(*a, *b, *c, card);
-	//Operation::CardSort(*a);
-	//Operation::CardSort(*b);
-	//Operation::CardSort(*c);
-	//ArrangePokers_1(*a);
-	//auto sb = SkipButton();
-	//auto pb = PlayButton();
-	////schedule(schedule_selector(GameScene::timehandle),2);//目前为输出player的ip
-	//a->Action(sb, pb, this);
 
-	boost::thread_group threads;
-	threads.create_thread(&Server::CreateAccept_thread);
+	
+	Settingbackgroud();
+
+	auto localusername = LabelTTF::create(local_client->localplayer->username, "arial", 30);
+	localusername->setPosition(130, 100);
+	addChild(localusername);
+	ReadyButton();
+
+
+	schedule(schedule_selector(GameScene::timehandle),2);//目前为输出localplayer的isready
+	
+
+
+	//boost::thread_group threads;
+	//threads.create_thread(&Server::CreateAccept_thread);
 
 
 	return true;
@@ -45,7 +44,7 @@ void GameScene::Settingbackgroud()
 }
 void GameScene::timehandle(float t)
 {
-	log("%s", LoginScene::local->IP.c_str());
+	log("%d", local_client->localplayer->isready);
 }
 Sprite* GameScene::PointButton_0()
 {
@@ -53,7 +52,7 @@ Sprite* GameScene::PointButton_0()
 	point_zero->setPosition(200, 500);
 	addChild(point_zero);
 	return point_zero;
-}
+}//未添加的sprite
 Sprite* GameScene::SkipButton()
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
@@ -62,7 +61,7 @@ Sprite* GameScene::SkipButton()
 	skip_button->setScale(0.78f);
 	addChild(skip_button);
 	return skip_button;
-}
+}//在operation中实现操作因此返回sprite
 Sprite* GameScene::PlayButton()
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
@@ -71,7 +70,23 @@ Sprite* GameScene::PlayButton()
 	play_button->setScale(0.78f);
 	addChild(play_button);
 	return play_button;
-}
+}//在operation中实现操作因此返回sprite
+void GameScene::ReadyButton()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto ready_button = Button::create("ready.png");
+	ready_button->setPosition(Vec2(visibleSize.width / 2, 305));
+	ready_button->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType type)
+	{
+		switch (type)
+		{
+		case Widget::TouchEventType::ENDED:
+			local_client->localplayer->isready = 1;
+			ready_button->removeFromParent();
+		}
+	});
+	addChild(ready_button);
+}//在此scene中实现功能
 void GameScene::ArrangePokers_1(Player& x)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();

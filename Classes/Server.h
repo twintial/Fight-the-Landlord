@@ -16,6 +16,9 @@ class Server
 public:
 	static void CreateAccept_thread();
 	static void Answer_to_client(socket_ptr sock);
+	static void HandleRequest(socket_ptr sock);
+	static void Loop_thread();
 private:
+
 };
 #endif
