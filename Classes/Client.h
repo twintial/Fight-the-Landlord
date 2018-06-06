@@ -12,7 +12,6 @@ public:
 	Client(string username);
 	void Connect(ip::tcp::endpoint ep);
 private:
-	static io_service service;
 	ip::tcp::socket sock;
 	string user_name;
 };

@@ -312,6 +312,13 @@ int Operation::CardType(Player& x)
 			return SEQUENCE_OF_TRIPLET_PAIR;
 		}
 	}
+	if (x.outpoker.size() == 6)
+	{
+		if (x.outpoker[0].card_number == x.outpoker[1].card_number&&x.outpoker[1].card_number == x.outpoker[2].card_number&&x.outpoker[2].card_number == x.outpoker[3].card_number)
+		{
+			return QUADPLEX_TWO_SINGLE;
+		}
+	}
 	if (x.outpoker.size() == 8)
 	{
 		if (x.outpoker[0].card_number == x.outpoker[1].card_number&&x.outpoker[1].card_number == x.outpoker[2].card_number&&x.outpoker[2].card_number == x.outpoker[3].card_number)

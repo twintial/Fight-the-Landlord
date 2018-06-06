@@ -1,6 +1,9 @@
 #include"GameScene.h"
 #include"PokerCard.h"
 USING_NS_CC;
+io_service service;//创建service实例
+
+
 Scene* GameScene::CreateScene()
 {
 	return GameScene::create();
@@ -14,19 +17,23 @@ bool GameScene::init()
 
 	Settingbackgroud();
 	//test
-	auto a = new Player();
-	auto b = new Player();
-	auto c = new Player();
-	Operation::CardShuffle(card);
-	Operation::CardDeal(*a, *b, *c, card);
-	Operation::CardSort(*a);
-	Operation::CardSort(*b);
-	Operation::CardSort(*c);
-	ArrangePokers_1(*a);
-	auto sb = SkipButton();
-	auto pb = PlayButton();
-	schedule(schedule_selector(GameScene::timehandle),2);
-	a->Action(sb, pb, this);
+	//auto a = new Player();
+	//auto b = new Player();
+	//auto c = new Player();
+	//Operation::CardShuffle(card);
+	//Operation::CardDeal(*a, *b, *c, card);
+	//Operation::CardSort(*a);
+	//Operation::CardSort(*b);
+	//Operation::CardSort(*c);
+	//ArrangePokers_1(*a);
+	//auto sb = SkipButton();
+	//auto pb = PlayButton();
+	////schedule(schedule_selector(GameScene::timehandle),2);//目前为输出player的ip
+	//a->Action(sb, pb, this);
+
+
+
+
 	return true;
 }
 void GameScene::Settingbackgroud()
@@ -123,4 +130,4 @@ bool GameScene::ArrangeoutPokers(Player* x)
 	x->outpoker.erase(x->outpoker.begin(), x->outpoker.end());//在以后需要改动
 	return true;
 }
-vector<int>GameScene::card;
+vector<int> GameScene::card;

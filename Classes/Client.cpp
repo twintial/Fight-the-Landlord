@@ -1,8 +1,8 @@
 #include<Client.h>
-Client::Client(string username) :sock(Client::service)
+io_service service;
+Client::Client(string username) :sock(service)
 {}
 void Client::Connect(ip::tcp::endpoint ep)
 {
 	sock.connect(ep);
 }
-io_service Client::service;

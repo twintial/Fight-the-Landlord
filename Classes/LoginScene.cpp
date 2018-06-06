@@ -1,5 +1,7 @@
 #include<LoginScene.h>
 USING_NS_CC;
+size_t LoginScene::state;
+Player* LoginScene::local;
 Scene* LoginScene::CreateHost()
 {
 	local = new Player();
@@ -171,5 +173,3 @@ int LoginScene::GetLocalIP()
 	local->IP = inet_ntoa(addr);
 	return 1;
 }//（若创建房间则连接本地IP）获取本地IP
-size_t LoginScene::state;
-Player* LoginScene::local;

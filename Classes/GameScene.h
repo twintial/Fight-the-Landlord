@@ -7,6 +7,8 @@
 #include"Operation.h"
 #include"Player.h"
 #include"LoginScene.h"
+#include"Client.h"
+#include"Server.h"
 using namespace std;
 class GameScene:public cocos2d::Scene
 {
@@ -23,6 +25,6 @@ public:
 	void ArrangeHandPokers_afterplay(Player* x);
 	CREATE_FUNC(GameScene);
 private:
-	static vector<int>card;
+	static vector<int> card;
 };
 #endif

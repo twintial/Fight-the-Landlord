@@ -9,6 +9,7 @@ using ip::tcp;
 class Server
 {
 public:
+	void CreateAccept_thread();
 private:
 };
 #endif
