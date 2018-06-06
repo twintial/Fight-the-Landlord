@@ -9,7 +9,7 @@ using ip::tcp;
 class Client
 {
 public:
-	Client(string username);
+	Client(string username, string IP);
 	void Connect(ip::tcp::endpoint ep);
 private:
 	ip::tcp::socket sock;

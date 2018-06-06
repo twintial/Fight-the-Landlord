@@ -7,7 +7,6 @@
 #include"Operation.h"
 #include"Player.h"
 #include"LoginScene.h"
-#include"Client.h"
 #include"Server.h"
 using namespace std;
 class GameScene:public cocos2d::Scene

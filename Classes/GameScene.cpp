@@ -1,8 +1,6 @@
 #include"GameScene.h"
 #include"PokerCard.h"
 USING_NS_CC;
-io_service service;//创建service实例
-
 
 Scene* GameScene::CreateScene()
 {
@@ -16,7 +14,7 @@ bool GameScene::init()
 	}
 
 	Settingbackgroud();
-	//test
+	////test
 	//auto a = new Player();
 	//auto b = new Player();
 	//auto c = new Player();
@@ -31,7 +29,8 @@ bool GameScene::init()
 	////schedule(schedule_selector(GameScene::timehandle),2);//目前为输出player的ip
 	//a->Action(sb, pb, this);
 
-
+	boost::thread_group threads;
+	threads.create_thread(&Server::CreateAccept_thread);
 
 
 	return true;
