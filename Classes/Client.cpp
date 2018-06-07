@@ -6,12 +6,13 @@ size_t read_complete_client(char * buff, const boost::system::error_code & err, 
 	return found ? 0 : 1;
 }
 
-Client::Client(Player* local) :sock(service)
+Client::Client(Player* local, GameScene* scene) :sock(service)
 {
 	connect = false;
 	localplayer = new Player();
 	localplayer->username = local->username;
 	localplayer->IP = local->IP;
+	localscene = scene;
 }
 int Client::Connect()
 {
@@ -45,14 +46,15 @@ void Client::Ask_to_server()
 	if (!GameScene::start)
 	{
 		sock.write_some(buffer("ping/n"));
+		HandleAnswer_unstart();
 	}
 	else
 	{
 
 	}
-	HandleAnswer();
+
 }
-void Client::HandleAnswer()
+void Client::HandleAnswer_unstart()
 {
 
 }

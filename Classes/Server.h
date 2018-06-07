@@ -15,15 +15,18 @@ typedef boost::shared_ptr<ip::tcp::socket> socket_ptr;
 class Server
 {
 public:
-	Server(Player*local);
+	Server(Player*local, GameScene* scene);
 	friend class GameScene;
 	void CreateAccept();
 	void Accept_thread();
-	static void Answer_to_client(socket_ptr sock);
+	static void Answer_to_client_unstart(socket_ptr sock);
 	static void HandleRequest(socket_ptr sock);
 	void Loop_thread();
+	void AddLocalName();
+	void AddRemoteName();
 	static size_t isbulid;
 private:
-	Player * localplayer;
+	Player* localplayer;
+	GameScene* localscene;
 };
 #endif

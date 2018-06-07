@@ -7,14 +7,6 @@ Server * local_server;
 Scene* GameScene::CreateScene()
 {
 	start = false;
-	if (LoginScene::state)
-	{
-		local_server = new Server(LoginScene::local);
-	}
-	else
-	{
-		local_client = new Client(LoginScene::local);
-	}
 	return GameScene::create();
 }
 bool GameScene::init()
@@ -23,13 +15,19 @@ bool GameScene::init()
 	{
 		return false;
 	}
+	if (LoginScene::state)
+	{
+		local_server = new Server(LoginScene::local, this);
+	}
+	else
+	{
+		local_client = new Client(LoginScene::local, this);
+	}
 
 	
 	Settingbackgroud();
 	
-	//auto localusername = LabelTTF::create(local_client->localplayer->username, "arial", 30);
-	//localusername->setPosition(130, 100);
-	//addChild(localusername);
+
 	ReadyButton();
 
 	//schedule(schedule_selector(GameScene::timehandle),2);//目前为输出LoginScene::state

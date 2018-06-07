@@ -52,7 +52,7 @@ void LoginScene::InputUsername()
 
 	auto tf = TextField::create("Enter your name", "arial", 30);
 	tf->setTextColor(Color4B(0,102, 205, 170));
-	tf->setMaxLength(15);
+	tf->setMaxLength(10);
 	tf->setMaxLengthEnabled(true);
 	tf->setPosition(visibleSize / 2);
 	addChild(tf);

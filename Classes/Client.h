@@ -11,15 +11,16 @@ using ip::tcp;
 class Client
 {
 public:
-	Client(Player*local);
+	Client(Player*local, GameScene* scene);
 	friend class GameScene;
 	int Connect();
 	void Ask_to_server();
-	void HandleAnswer();
+	void HandleAnswer_unstart();
 	void Loop_thread();
 private:
 	bool connect;
 	Player* localplayer;
+	GameScene* localscene;
 	ip::tcp::socket sock;
 };
 #endif
