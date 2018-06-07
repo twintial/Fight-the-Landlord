@@ -13,6 +13,8 @@ using namespace std;
 class GameScene:public cocos2d::Scene
 {
 public:
+	static bool start;//游戏是否已经开始
+
 	static cocos2d::Scene* CreateScene();
 	virtual bool init();
 	Sprite* PointButton_0();

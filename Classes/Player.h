@@ -14,6 +14,7 @@ public:
 	friend class GameScene;
 	friend class LoginScene;
 	friend class Client;
+	friend class Server;
 	Player();
 	Player &operator= (Player&);
 	void Action(Sprite*, Sprite*, GameScene*);
@@ -24,7 +25,7 @@ private:
 	int status;//农民和地主的情况
 	int lord_point;
 	int playercode;//第几位加入游戏的玩家
-	int isready;
+	bool isready;
 	string username;
 	string IP;
 };

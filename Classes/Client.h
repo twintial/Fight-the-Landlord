@@ -4,6 +4,7 @@
 #include<boost/asio.hpp>
 #include<string>
 #include<Player.h>
+#include <GameScene.h>
 using namespace boost::asio;
 using namespace std;
 using ip::tcp;
@@ -13,8 +14,8 @@ public:
 	Client(Player*local);
 	friend class GameScene;
 	int Connect();
-	static void Ask_to_server();
-	static void HandleAnswer();
+	void Ask_to_server();
+	void HandleAnswer();
 	void Loop_thread();
 private:
 	bool connect;

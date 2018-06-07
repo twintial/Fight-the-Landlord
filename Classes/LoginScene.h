@@ -11,6 +11,7 @@ using namespace ui;
 class LoginScene :public cocos2d::Scene
 {
 public:
+	friend class GameScene;
 	static Player* local;
 	static cocos2d::Scene* CreateHost();
 	static cocos2d::Scene* CreateGuest();

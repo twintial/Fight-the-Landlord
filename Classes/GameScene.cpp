@@ -1,10 +1,20 @@
 #include"GameScene.h"
 #include"PokerCard.h"
 USING_NS_CC;
+bool GameScene::start;
 Client * local_client;
+Server * local_server;
 Scene* GameScene::CreateScene()
 {
-	local_client = new Client(LoginScene::local);
+	start = false;
+	if (LoginScene::state)
+	{
+		local_server = new Server(LoginScene::local);
+	}
+	else
+	{
+		local_client = new Client(LoginScene::local);
+	}
 	return GameScene::create();
 }
 bool GameScene::init()
@@ -14,22 +24,28 @@ bool GameScene::init()
 		return false;
 	}
 
-
 	
 	Settingbackgroud();
-
-	auto localusername = LabelTTF::create(local_client->localplayer->username, "arial", 30);
-	localusername->setPosition(130, 100);
-	addChild(localusername);
+	
+	//auto localusername = LabelTTF::create(local_client->localplayer->username, "arial", 30);
+	//localusername->setPosition(130, 100);
+	//addChild(localusername);
 	ReadyButton();
 
-
-	schedule(schedule_selector(GameScene::timehandle),2);//目前为输出localplayer的isready
+	//schedule(schedule_selector(GameScene::timehandle),2);//目前为输出LoginScene::state
 	
+	//创建连接服务器
+	if (LoginScene::state)
+	{
+		local_server->Accept_thread();
+	}
+	else
+	{
+		local_client->Connect();
+	}
 
+	//数据传输
 
-	//boost::thread_group threads;
-	//threads.create_thread(&Server::CreateAccept_thread);
 
 
 	return true;
@@ -44,7 +60,7 @@ void GameScene::Settingbackgroud()
 }
 void GameScene::timehandle(float t)
 {
-	log("%d", local_client->localplayer->isready);
+	log("%d", LoginScene::state);
 }
 Sprite* GameScene::PointButton_0()
 {
@@ -81,7 +97,14 @@ void GameScene::ReadyButton()
 		switch (type)
 		{
 		case Widget::TouchEventType::ENDED:
-			local_client->localplayer->isready = 1;
+			if (LoginScene::state)
+			{
+				local_server->localplayer->isready = true;
+			}
+			else
+			{
+				local_client->localplayer->isready = true;
+			}
 			ready_button->removeFromParent();
 		}
 	});
