@@ -76,14 +76,14 @@ void Client::ReadyMsg()
 {
 	while (true)
 	{
-		if (isroomjoin)
+		log("%d",isallready);
+		if (isroomjoin && !isallready)
 		{
 			char ready[1];
 			ready[0] = localplayer->isready ? 1 : 0;
 			try 
 			{
 				sock.write_some(buffer(ready));
-				boost::this_thread::sleep(boost::posix_time::millisec(1000));
 			}
 			catch (boost::system::system_error e)
 			{
@@ -94,7 +94,7 @@ void Client::ReadyMsg()
 			char isready[1];
 			sock.read_some(buffer(isready));
 			log("isready=%d", isready[0]);
-			if (isready)
+			if (isready[0])
 			{
 				isallready = true;
 			}

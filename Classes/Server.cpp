@@ -3,6 +3,7 @@ USING_NS_CC;
 
 extern char players[1] = { 0 };
 int ready_players[3] = { 0 };//0,1为client 2为host
+int hastold[2] = { 0 };
 vector<socket_ptr> client;
 vector<string> users_name;
 boost::recursive_mutex cs;//保证线程安全
@@ -84,7 +85,9 @@ void Server::ReadyMsg()
 {
 	while (true)
 	{
-		if (isroomjoin)
+		log("0=%d", hastold[0]);
+		log("1=%d", hastold[1]);
+		if (isroomjoin && (hastold[0] == 0 || hastold[1] == 0))
 		{
 			//host是否准备
 			if (localplayer->isready)
@@ -119,7 +122,14 @@ void Server::ReadyMsg()
 				char isready[1];
 				isready[0] = isallready ? 1 : 0;
 				client[i]->write_some(buffer(isready));
-				boost::this_thread::sleep(boost::posix_time::millisec(500));
+				if (isallready)
+				{
+					hastold[i] = 1;
+				}
+				if (hastold[0] == 1 && hastold[1] == 1)
+				{
+					break;
+				}
 			}
 		}
 	}
