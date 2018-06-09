@@ -148,7 +148,6 @@ void LoginScene::OKbutton()
 	auto menu = Menu::create(menuitem, NULL);
 	menu->setPosition(visibleSize.width / 2, visibleSize.height / 2 - 300);
 	addChild(menu);
-
 }
 int LoginScene::GetLocalIP()
 {

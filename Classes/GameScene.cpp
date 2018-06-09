@@ -26,12 +26,9 @@ bool GameScene::init()
 
 	
 	Settingbackgroud();
-	
-
 	ReadyButton();
 
-	//schedule(schedule_selector(GameScene::timehandle),2);//目前为输出LoginScene::state
-	
+	//schedule(schedule_selector(GameScene::timehandle),2);//
 	//创建连接服务器
 	if (LoginScene::state)
 	{
@@ -39,11 +36,18 @@ bool GameScene::init()
 	}
 	else
 	{
-		local_client->Connect();
+		local_client->Connect_thread();
 	}
 
+	if (LoginScene::state)
+	{
+		local_server->ReadyMsg_thread();
+	}
+	else
+	{
+		local_client->ReadyMsg_thread();
+	}
 	//数据传输
-
 
 
 	return true;

@@ -8,19 +8,46 @@
 using namespace boost::asio;
 using namespace std;
 using ip::tcp;
+struct player_data_before_start_client
+{
+	int player_num;
+	int isgamestart;
+	char a_username[10];
+	char b_username[10];
+	char c_username[10];
+
+};
 class Client
 {
 public:
 	Client(Player*local, GameScene* scene);
 	friend class GameScene;
-	int Connect();
+	int CreateConnect();
+	void Connect_thread();
+
+	void ReadyMsg();
+	void ReadyMsg_thread();
+
 	void Ask_to_server();
 	void HandleAnswer_unstart();
+
+	void CreateLoop();
 	void Loop_thread();
+
+	void AddLocalName();
+	void AddLeftName(string leftname);
+	void AddRightName(string rightname);
+
+	string read_msg();
 private:
+	player_data_before_start_client datas;
+	int already_read;
 	bool connect;
+	bool isroomjoin;
+	bool isallready;
 	Player* localplayer;
 	GameScene* localscene;
 	ip::tcp::socket sock;
+	int isadd[2];//其余玩家是否已经添加
 };
 #endif
