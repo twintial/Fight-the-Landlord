@@ -13,7 +13,6 @@ using namespace std;
 class GameScene:public cocos2d::Scene
 {
 public:
-	static bool start;//游戏是否已经开始
 
 	static cocos2d::Scene* CreateScene();
 	virtual bool init();
@@ -22,12 +21,13 @@ public:
 	Sprite* PlayButton();
 	void ReadyButton();
 	void Settingbackgroud();
-	void ArrangePokers_1(Player&);
+	void ArrangePokers_1(vector<PokerCard>& handpoker);
 	void timehandle(float t);//
 	bool ArrangeoutPokers(Player*);
 	void ArrangeHandPokers_afterplay(Player* x);
 	CREATE_FUNC(GameScene);
 private:
 	static vector<int> card;
+	Player* local;
 };
 #endif

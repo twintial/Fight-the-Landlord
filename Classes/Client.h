@@ -28,6 +28,9 @@ public:
 	void ReadyMsg();
 	void ReadyMsg_thread();
 
+	void DealAndSnatchlandlord();
+	void DealAndSnatchlandlord_thread();
+
 	void Ask_to_server();
 	void HandleAnswer_unstart();
 
@@ -45,6 +48,7 @@ private:
 	bool connect;
 	bool isroomjoin;
 	bool isallready;
+	bool ishandreceive;
 	Player* localplayer;
 	GameScene* localscene;
 	ip::tcp::socket sock;

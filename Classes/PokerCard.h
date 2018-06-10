@@ -15,6 +15,7 @@ public:
 	friend class GameScene;
 	friend class Operation;
 	friend class Player;
+	friend class Server;//
 	~PokerCard();
 private:
 	int card_number;

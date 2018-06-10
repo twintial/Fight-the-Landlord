@@ -8,6 +8,8 @@
 #include<boost/bind.hpp>
 #include<boost/thread.hpp>
 #include "Player.h"
+#include"Operation.h"
+#include "GameScene.h"
 using namespace boost::asio;
 using namespace std;
 using ip::tcp;
@@ -31,6 +33,9 @@ public:
 
 	void ReadyMsg();
 	void ReadyMsg_thread();
+	
+	void DealAndSnatchlandlord();
+	void DealAndSnatchlandlord_thread();
 
 	void HandleRequest(socket_ptr sock);
 	void AnalyzeRequest(socket_ptr sock, string msg);
@@ -45,6 +50,7 @@ public:
 	static size_t isbulid;
 private:
 	player_data_before_start_server datas;
+	bool ishandsend;
 	bool isroomjoin;
 	bool isallready;
 	int already_read;

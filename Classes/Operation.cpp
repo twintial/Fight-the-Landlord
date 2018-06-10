@@ -100,6 +100,11 @@ void Operation::CardSort(Player& x)
 		}
 	}//¥Û–°Õı≈≈–Ú
 	x.hand = hand_temp;
+
+	for (int i = 0; i <= x.hand.size() - 1; i++)
+	{
+		x.handpoker.push_back(PokerCard(x.hand[i]));
+	}
 }
 void Operation::OutCardSort(Player& x)
 {

@@ -1,12 +1,10 @@
 #include"GameScene.h"
 #include"PokerCard.h"
 USING_NS_CC;
-bool GameScene::start;
 Client * local_client;
 Server * local_server;
 Scene* GameScene::CreateScene()
 {
-	start = false;
 	return GameScene::create();
 }
 bool GameScene::init()
@@ -23,12 +21,11 @@ bool GameScene::init()
 	{
 		local_client = new Client(LoginScene::local, this);
 	}
-
-	
+	local = new Player();
 	Settingbackgroud();
 	ReadyButton();
 
-	//schedule(schedule_selector(GameScene::timehandle),2);//
+	schedule(schedule_selector(GameScene::timehandle),0.1);//
 	//创建连接服务器
 	if (LoginScene::state)
 	{
@@ -38,7 +35,8 @@ bool GameScene::init()
 	{
 		local_client->Connect_thread();
 	}
-
+	//数据传输
+	//准备状况
 	if (LoginScene::state)
 	{
 		local_server->ReadyMsg_thread();
@@ -47,9 +45,26 @@ bool GameScene::init()
 	{
 		local_client->ReadyMsg_thread();
 	}
-	//数据传输
+	//发牌，抢地主
+	if (LoginScene::state)
+	{
+		local_server->DealAndSnatchlandlord_thread();
+	}
+	else
+	{
+		local_client->DealAndSnatchlandlord_thread();
+	}
+	//test
+	//auto a = local_server->localplayer;
+	//auto b = new Player();
+	//auto c = new Player();
+	//Operation::CardShuffle(card);vf54321145y78
+	//Operation::CardDeal(*a, *b, *c, card);
+	//Operation::CardSort(*a);
 
-
+	//auto sb = SkipButton();
+	//auto pb = PlayButton();
+	//a->Action(sb, pb, this);
 	return true;
 }
 void GameScene::Settingbackgroud()
@@ -62,7 +77,40 @@ void GameScene::Settingbackgroud()
 }
 void GameScene::timehandle(float t)
 {
-	log("%d", LoginScene::state);
+	if (LoginScene::state)
+	{
+		if (local_server->ishandsend)
+		{
+			local->hand.resize(17);
+			for (int i = 0; i <= 16; i++)
+			{
+				local->hand[i] = local_server->localplayer->hand[i];
+			}
+			Operation::CardSort(*local);
+			ArrangePokers_1(local->handpoker);
+			auto sb = SkipButton();
+			auto pb = PlayButton();
+			local->Action(sb, pb, this);
+			this->unschedule(schedule_selector(GameScene::timehandle));
+		}
+	}
+	else
+	{
+		if (local_client->ishandreceive)
+		{
+			local->hand.resize(17);
+			for (int i = 0; i <= 16; i++)
+			{
+				local->hand[i] = local_client->localplayer->hand[i];
+			}
+			Operation::CardSort(*local);
+			ArrangePokers_1(local->handpoker);
+			auto sb = SkipButton();
+			auto pb = PlayButton();
+			local->Action(sb, pb, this);
+			this->unschedule(schedule_selector(GameScene::timehandle));
+		}
+	}
 }
 Sprite* GameScene::PointButton_0()
 {
@@ -112,23 +160,19 @@ void GameScene::ReadyButton()
 	});
 	addChild(ready_button);
 }//在此scene中实现功能
-void GameScene::ArrangePokers_1(Player& x)
+void GameScene::ArrangePokers_1(vector<PokerCard>& handpoker)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
-	for (int i = 0; i <= x.hand.size() - 1; i++)
+	handpoker[handpoker.size() / 2].card_picture->setPosition(visibleSize.width / 2, 150);//set center poker
+	size_t cx = handpoker[handpoker.size() / 2].card_picture->getPositionX();
+	for (int i = 0; i <= handpoker.size() - 1; i++)
 	{
-		x.handpoker.push_back(PokerCard(x.hand[i]));
-	}
-	x.handpoker[x.handpoker.size() / 2].card_picture->setPosition(visibleSize.width / 2, 150);//set left poker
-	size_t cx = x.handpoker[x.handpoker.size() / 2].card_picture->getPositionX();
-	for (int i = 0; i <= x.handpoker.size() - 1; i++)
-	{
-		x.handpoker[i].card_picture->setPosition(cx - 50 * (i - (x.handpoker.size() / 2)), 150);
+		handpoker[i].card_picture->setPosition(cx - 50 * (i - (handpoker.size() / 2)), 150);
 	}
 	for (int i = 0; i <= 16; i++)
 	{
-		x.handpoker[i].ClickTrigger();
-		addChild(x.handpoker[i].card_picture, x.handpoker.size() - 1 - i);
+		handpoker[i].ClickTrigger();
+		this->addChild(handpoker[i].card_picture, handpoker.size() - 1 - i);
 	}
 }
 void GameScene::ArrangeHandPokers_afterplay(Player* x)

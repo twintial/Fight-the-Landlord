@@ -17,6 +17,7 @@ Server::Server(Player* local, GameScene* scene)
 {
 	isroomjoin = false;
 	isallready = false;
+	ishandsend = false;
 
 	datas.player_num = 0;
 	datas.isgamestart = 0;
@@ -85,10 +86,10 @@ void Server::ReadyMsg()
 {
 	while (true)
 	{
-		log("0=%d", hastold[0]);
-		log("1=%d", hastold[1]);
 		if (isroomjoin && (hastold[0] == 0 || hastold[1] == 0))
 		{
+			log("0=%d", hastold[0]);
+			log("1=%d", hastold[1]);
 			//host是否准备
 			if (localplayer->isready)
 			{
@@ -139,77 +140,105 @@ void Server::ReadyMsg_thread()
 	boost::thread ReadyMsg(boost::bind(&Server::ReadyMsg, this));
 }
 
-void Server::HandleRequest(socket_ptr sock)
+void Server::DealAndSnatchlandlord()
 {
-	//if (localplayer->isready)
-	//{
-	//	ready_num++;
-	//	localplayer->isready = false;
-	//}
-	//log("readyread");
-	//try
-	//{
-	//	//AnalyzeRequest(sock, msg);
-	//}
-	//catch (boost::system::system_error & err)
-	//{
-	//	MessageBox("server read error", "server read error");
-	//}
-
-}
-void Server::AnalyzeRequest(socket_ptr sock, string msg)
-{
-	//if (msg == "clientstate"||msg=="0clientstate")
-	//{
-	//	char send_buff[512];
-	//	memset(send_buff, 0, sizeof(send_buff));
-	//	memcpy(send_buff, &datas, sizeof(datas));
-	//	try 
-	//	{
-	//		sock->write_some(buffer(send_buff));
-	//	}
-	//	catch (boost::system::system_error & err)
-	//	{
-	//		MessageBox("server write error", "server write error");
-	//	}
-
-	//	//读取此玩家的准备情况
-	//	//log("isread=%s", isready.c_str());
-	//	//if (isready == "1")
-	//	//{
-	//	//	ready_num++;
-	//	//}
-	//	if (ready_num == 3)
-	//	{
-	//		GameScene::start = true;
-	//		datas.isgamestart = 1;
-	//	}
-	//}
-}
-
-void Server::CreateLoop()
-{
-	log("enter server loop");
-	//boost::recursive_mutex::scoped_lock lk(cs);//防止死锁
-	while (1)
+	boost::recursive_mutex::scoped_lock lk(cs);
+	vector<int>card;
+	Operation::CardShuffle(card);
+	auto b = new Player();
+	auto c = new Player();
+	//发牌
+	Operation::CardDeal(*localplayer, *b, *c, card);
+	Operation::CardSort(*localplayer);
+	while (true)
 	{
-		
-		if (client.size() != 0)
+		if (hastold[0] == 1 && hastold[1] == 1)
 		{
-			log("server looping");
-			for (auto b = client.begin(), e = client.end(); b != e; ++b)
+			if (!ishandsend)
 			{
-				//boost::this_thread::sleep(boost::posix_time::millisec(100));
-				boost::recursive_mutex::scoped_lock lk(cs);
-				HandleRequest(*b);
+				client[0]->write_some(buffer(b->hand));
+				client[1]->write_some(buffer(c->hand));
+				ishandsend = true;
 			}
 		}
 	}
 }
-void Server::Loop_thread()
+void Server::DealAndSnatchlandlord_thread()
 {
-	boost::thread loop(boost::bind(&Server::CreateLoop, this));
+	boost::thread DealAndSnatchlandlord(boost::bind(&Server::DealAndSnatchlandlord, this));
 }
+
+//void Server::HandleRequest(socket_ptr sock)
+//{
+//	//if (localplayer->isready)
+//	//{
+//	//	ready_num++;
+//	//	localplayer->isready = false;
+//	//}
+//	//log("readyread");
+//	//try
+//	//{
+//	//	//AnalyzeRequest(sock, msg);
+//	//}
+//	//catch (boost::system::system_error & err)
+//	//{
+//	//	MessageBox("server read error", "server read error");
+//	//}
+//
+//}
+//void Server::AnalyzeRequest(socket_ptr sock, string msg)
+//{
+//	//if (msg == "clientstate"||msg=="0clientstate")
+//	//{
+//	//	char send_buff[512];
+//	//	memset(send_buff, 0, sizeof(send_buff));
+//	//	memcpy(send_buff, &datas, sizeof(datas));
+//	//	try 
+//	//	{
+//	//		sock->write_some(buffer(send_buff));
+//	//	}
+//	//	catch (boost::system::system_error & err)
+//	//	{
+//	//		MessageBox("server write error", "server write error");
+//	//	}
+//
+//	//	//读取此玩家的准备情况
+//	//	//log("isread=%s", isready.c_str());
+//	//	//if (isready == "1")
+//	//	//{
+//	//	//	ready_num++;
+//	//	//}
+//	//	if (ready_num == 3)
+//	//	{
+//	//		GameScene::start = true;
+//	//		datas.isgamestart = 1;
+//	//	}
+//	//}
+//}
+//
+//void Server::CreateLoop()
+//{
+//	log("enter server loop");
+//	//boost::recursive_mutex::scoped_lock lk(cs);//防止死锁
+//	while (1)
+//	{
+//		
+//		if (client.size() != 0)
+//		{
+//			log("server looping");
+//			for (auto b = client.begin(), e = client.end(); b != e; ++b)
+//			{
+//				//boost::this_thread::sleep(boost::posix_time::millisec(100));
+//				boost::recursive_mutex::scoped_lock lk(cs);
+//				HandleRequest(*b);
+//			}
+//		}
+//	}
+//}
+//void Server::Loop_thread()
+//{
+//	boost::thread loop(boost::bind(&Server::CreateLoop, this));
+//}
 
 void Server::AddLocalName()
 {
