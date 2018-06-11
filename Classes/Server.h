@@ -56,6 +56,7 @@ private:
 	int already_read;
 	int max_point;
 	int now_lord;
+	int islord;
 	char now_choose[1];
 	Player* localplayer;
 	GameScene* localscene;//无法利用localscene添加牌，原因不明

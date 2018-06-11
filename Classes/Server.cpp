@@ -26,6 +26,7 @@ Server::Server(Player* local, GameScene* scene)
 	now_lord = -1;
 	already_read = 0;
 	now_choose[0] = -1;
+	islord = -1;
 
 	localplayer = new Player();
 	localplayer->username = local->username;
@@ -221,6 +222,23 @@ void Server::DealAndSnatchlandlord()
 			}
 			break;
 		}
+	}
+	//Ìí¼ÓµØÖ÷ÅÆ
+	if (now_lord == localplayer->playercode)
+	{
+		localplayer->hand.push_back(card[51]);
+		localplayer->hand.push_back(card[52]);
+		localplayer->hand.push_back(card[53]);
+		islord = 1;
+	}
+	else
+	{
+		vector<int>lord_poker;
+		lord_poker.push_back(card[51]);
+		lord_poker.push_back(card[52]);
+		lord_poker.push_back(card[53]);
+		client[now_lord - 2]->write_some(buffer(lord_poker));
+		islord = 0;
 	}
 }
 void Server::DealAndSnatchlandlord_thread()

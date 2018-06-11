@@ -47,6 +47,7 @@ private:
 	int already_read;
 	int max_point;
 	int now_lord;
+	int islord;
 	bool connect;
 	bool isroomjoin;
 	bool isallready;

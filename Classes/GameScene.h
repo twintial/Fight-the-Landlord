@@ -24,7 +24,8 @@ public:
 
 	void Settingbackgroud();
 	void ArrangePokers(vector<PokerCard>& handpoker);
-	void ArrangePoker_Online(float t);
+	void ArrangePoker_before(float t);
+	void ArrangePoker_lord(float t);
 	void ArrangeLordbutton(float t);
 	bool ArrangeoutPokers(Player*);
 	void ArrangeHandPokers_afterplay(Player* x);

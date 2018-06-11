@@ -93,7 +93,7 @@ void Operation::CardSort(Player& x)
 		}
 		else
 		{
-			if (x.hand[i] == 53 && hand_temp.size() == 16)
+			if (x.hand[i] == 53 && hand_temp.size() == x.hand.size() - 1)//16
 			{
 				hand_temp.push_back(x.hand[i]);
 			}

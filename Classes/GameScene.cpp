@@ -30,7 +30,8 @@ bool GameScene::init()
 	Settingbackgroud();
 	ReadyButton();
 
-	schedule(schedule_selector(GameScene::ArrangePoker_Online),0.1);
+	schedule(schedule_selector(GameScene::ArrangePoker_before),0.1);
+	schedule(schedule_selector(GameScene::ArrangePoker_lord), 1);
 	schedule(schedule_selector(GameScene::ArrangeLordbutton), 1);
 	//创建连接服务器
 	if (LoginScene::state)
@@ -71,7 +72,8 @@ void GameScene::Settingbackgroud()
 	background->setPosition(visibleSize / 2);
 	this->addChild(background);
 }
-void GameScene::ArrangePoker_Online(float t)
+
+void GameScene::ArrangePoker_before(float t)
 {
 	if (LoginScene::state)
 	{
@@ -84,7 +86,7 @@ void GameScene::ArrangePoker_Online(float t)
 			}
 			Operation::CardSort(*local);
 			ArrangePokers(local->handpoker);
-			this->unschedule(schedule_selector(GameScene::ArrangePoker_Online));
+			this->unschedule(schedule_selector(GameScene::ArrangePoker_before));
 		}
 	}
 	else
@@ -98,7 +100,62 @@ void GameScene::ArrangePoker_Online(float t)
 			}
 			Operation::CardSort(*local);
 			ArrangePokers(local->handpoker);
-			this->unschedule(schedule_selector(GameScene::ArrangePoker_Online));
+			this->unschedule(schedule_selector(GameScene::ArrangePoker_before));
+		}
+	}
+}
+void GameScene::ArrangePoker_lord(float t)
+{
+	if (LoginScene::state)
+	{
+		if (local_server->islord != -1)
+		{
+			if (local_server->islord)
+			{
+				for (int i = 0; i <= 16; i++)
+				{
+					local->handpoker[i].card_picture->removeFromParent();
+				}
+				local->hand.resize(20);
+				local->handpoker.erase(local->handpoker.begin(), local->handpoker.end());
+				for (int i = 0; i <= 19; i++)
+				{
+					local->hand[i] = local_server->localplayer->hand[i];
+				}
+				Operation::CardSort(*local);
+				ArrangePokers(local->handpoker);
+				this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));
+			}
+			else
+			{
+				this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));
+			}
+		}
+	}
+	else
+	{
+		if (local_client->islord != -1)
+		{
+			if (local_client->islord)
+			{
+				for (int i = 0; i <= 16; i++)
+				{
+					local->handpoker[i].card_picture->removeFromParent();
+				}
+				local->hand.resize(20);
+				local->handpoker.erase(local->handpoker.begin(), local->handpoker.end());
+				for (int i = 0; i <= 19; i++)
+				{
+					local->hand[i] = local_client->localplayer->hand[i];
+				}
+				Operation::CardSort(*local);
+				ArrangePokers(local->handpoker);
+				this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));
+			}
+			else
+			{
+				this->unschedule(schedule_selector(GameScene::ArrangePoker_before));
+			}
 		}
 	}
 }
@@ -151,6 +208,7 @@ void GameScene::ArrangeLordbutton(float t)
 		}
 	}
 }
+
 Sprite* GameScene::SkipButton()
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
@@ -311,7 +369,7 @@ void GameScene::ArrangePokers(vector<PokerCard>& handpoker)
 	{
 		handpoker[i].card_picture->setPosition(cx - 50 * (i - (handpoker.size() / 2)), 150);
 	}
-	for (int i = 0; i <= 16; i++)
+	for (int i = 0; i <= handpoker.size() - 1; i++)//16
 	{
 		handpoker[i].ClickTrigger();
 		this->addChild(handpoker[i].card_picture, handpoker.size() - 1 - i);

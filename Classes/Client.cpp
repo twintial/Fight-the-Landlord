@@ -12,10 +12,13 @@ Client::Client(Player* local, GameScene* scene) :sock(service)
 	max_point = -1;
 	now_lord = -1;
 	already_read = 0;
+	islord = -1;
+
 	connect = false;
 	isroomjoin = false;
 	isallready = false;
 	ishandreceive = false;
+
 	localplayer = new Player();
 	localplayer->username = local->username;
 	localplayer->IP = local->IP;
@@ -118,6 +121,7 @@ void Client::DealAndSnatchlandlord()
 			{
 				if (!ishandreceive)
 				{
+					localplayer->hand.resize(17);
 					sock.read_some(buffer(localplayer->hand));
 					ishandreceive = true;
 				}
@@ -162,6 +166,20 @@ void Client::DealAndSnatchlandlord()
 				}
 				break;
 			}
+		}
+		//Ìí¼ÓµØÖ÷ÅÆ
+		if (now_lord == localplayer->playercode)
+		{
+			vector<int>lord_poker(3);
+			sock.read_some(buffer(lord_poker));
+			localplayer->hand.push_back(lord_poker[0]);
+			localplayer->hand.push_back(lord_poker[1]);
+			localplayer->hand.push_back(lord_poker[2]);
+			islord = 1;
+		}
+		else
+		{
+			islord = 0;
 		}
 	}
 	catch (boost::system::system_error e)
