@@ -23,7 +23,7 @@ private:
 	vector<PokerCard> handpoker;
 	vector<PokerCard> outpoker;
 	int status;//农民和地主的情况
-	int lord_point;
+	int lord_point;//地主分数
 	int playercode;//第几位加入游戏的玩家
 	bool isready;
 	string username;

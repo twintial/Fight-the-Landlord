@@ -3,6 +3,11 @@
 USING_NS_CC;
 Client * local_client;
 Server * local_server;
+vector<int> GameScene::card;
+Button* a;
+Button* b;
+Button* c;
+Button* d;
 Scene* GameScene::CreateScene()
 {
 	return GameScene::create();
@@ -25,7 +30,8 @@ bool GameScene::init()
 	Settingbackgroud();
 	ReadyButton();
 
-	schedule(schedule_selector(GameScene::timehandle),0.1);//
+	schedule(schedule_selector(GameScene::ArrangePoker_Online),0.1);
+	schedule(schedule_selector(GameScene::ArrangeLordbutton), 1);
 	//创建连接服务器
 	if (LoginScene::state)
 	{
@@ -54,17 +60,7 @@ bool GameScene::init()
 	{
 		local_client->DealAndSnatchlandlord_thread();
 	}
-	//test
-	//auto a = local_server->localplayer;
-	//auto b = new Player();
-	//auto c = new Player();
-	//Operation::CardShuffle(card);vf54321145y78
-	//Operation::CardDeal(*a, *b, *c, card);
-	//Operation::CardSort(*a);
 
-	//auto sb = SkipButton();
-	//auto pb = PlayButton();
-	//a->Action(sb, pb, this);
 	return true;
 }
 void GameScene::Settingbackgroud()
@@ -75,7 +71,7 @@ void GameScene::Settingbackgroud()
 	background->setPosition(visibleSize / 2);
 	this->addChild(background);
 }
-void GameScene::timehandle(float t)
+void GameScene::ArrangePoker_Online(float t)
 {
 	if (LoginScene::state)
 	{
@@ -87,11 +83,8 @@ void GameScene::timehandle(float t)
 				local->hand[i] = local_server->localplayer->hand[i];
 			}
 			Operation::CardSort(*local);
-			ArrangePokers_1(local->handpoker);
-			auto sb = SkipButton();
-			auto pb = PlayButton();
-			local->Action(sb, pb, this);
-			this->unschedule(schedule_selector(GameScene::timehandle));
+			ArrangePokers(local->handpoker);
+			this->unschedule(schedule_selector(GameScene::ArrangePoker_Online));
 		}
 	}
 	else
@@ -104,21 +97,60 @@ void GameScene::timehandle(float t)
 				local->hand[i] = local_client->localplayer->hand[i];
 			}
 			Operation::CardSort(*local);
-			ArrangePokers_1(local->handpoker);
-			auto sb = SkipButton();
-			auto pb = PlayButton();
-			local->Action(sb, pb, this);
-			this->unschedule(schedule_selector(GameScene::timehandle));
+			ArrangePokers(local->handpoker);
+			this->unschedule(schedule_selector(GameScene::ArrangePoker_Online));
 		}
 	}
 }
-Sprite* GameScene::PointButton_0()
+void GameScene::ArrangeLordbutton(float t)
 {
-	auto point_zero= Sprite::create("point_0.png");
-	point_zero->setPosition(200, 500);
-	addChild(point_zero);
-	return point_zero;
-}//未添加的sprite
+	if (LoginScene::state)
+	{
+		if (local_server->localplayer->playercode == local_server->now_choose[0])
+		{
+			a = PointButton_0();
+			b = PointButton_1();
+			c = PointButton_2();
+			d = PointButton_3();
+			if (local_server->max_point == 1)
+			{
+				b->setBright(false);
+				b->setTouchEnabled(false);
+			}
+			else if (local_server->max_point == 2)
+			{
+				b->setBright(false);
+				b->setTouchEnabled(false);
+				c->setBright(false);
+				c->setTouchEnabled(false);
+			}
+			this->unschedule(schedule_selector(GameScene::ArrangeLordbutton));
+		}
+	}
+	else
+	{
+		if (local_client->localplayer->playercode == local_client->now_choose[0])
+		{
+			a = PointButton_0();
+			b = PointButton_1();
+			c = PointButton_2();
+			d = PointButton_3();
+			if (local_client->max_point == 1)
+			{
+				b->setBright(false);
+				b->setTouchEnabled(false);
+			}
+			else if (local_client->max_point == 2)
+			{
+				b->setBright(false);
+				b->setTouchEnabled(false);
+				c->setBright(false);
+				c->setTouchEnabled(false);
+			}
+			this->unschedule(schedule_selector(GameScene::ArrangeLordbutton));
+		}
+	}
+}
 Sprite* GameScene::SkipButton()
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
@@ -160,7 +192,117 @@ void GameScene::ReadyButton()
 	});
 	addChild(ready_button);
 }//在此scene中实现功能
-void GameScene::ArrangePokers_1(vector<PokerCard>& handpoker)
+
+Button* GameScene::PointButton_0()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto zero_button = Button::create("point_0.png");
+	zero_button->setPosition(Vec2(visibleSize.width / 2 - 300, 305));
+	zero_button->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType type)
+	{
+		switch (type)
+		{
+		case Widget::TouchEventType::ENDED:
+			if (LoginScene::state)
+			{
+				local_server->localplayer->lord_point = 0;
+			}
+			else
+			{
+				local_client->localplayer->lord_point = 0;
+			}
+			a->removeFromParent();
+			b->removeFromParent();
+			c->removeFromParent();
+			d->removeFromParent();
+		}
+	});
+	addChild(zero_button);
+	return zero_button;
+}
+Button* GameScene::PointButton_1()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto one_button = Button::create("point_1.png");
+	one_button->setPosition(Vec2(visibleSize.width / 2 - 100, 305));
+	one_button->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType type)
+	{
+		switch (type)
+		{
+		case Widget::TouchEventType::ENDED:
+			if (LoginScene::state)
+			{
+				local_server->localplayer->lord_point = 1;
+			}
+			else
+			{
+				local_client->localplayer->lord_point = 1;
+			}
+			a->removeFromParent();
+			b->removeFromParent();
+			c->removeFromParent();
+			d->removeFromParent();
+		}
+	});
+	addChild(one_button);
+	return one_button;
+}
+Button* GameScene::PointButton_2()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto two_button = Button::create("point_2.png");
+	two_button->setPosition(Vec2(visibleSize.width / 2 + 100, 305));
+	two_button->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType type)
+	{
+		switch (type)
+		{
+		case Widget::TouchEventType::ENDED:
+			if (LoginScene::state)
+			{
+				local_server->localplayer->lord_point = 2;
+			}
+			else
+			{
+				local_client->localplayer->lord_point = 2;
+			}
+			a->removeFromParent();
+			b->removeFromParent();
+			c->removeFromParent();
+			d->removeFromParent();
+		}
+	});
+	addChild(two_button);
+	return two_button;
+}
+Button* GameScene::PointButton_3()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto three_button = Button::create("point_3.png");
+	three_button->setPosition(Vec2(visibleSize.width / 2 + 300, 305));
+	three_button->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType type)
+	{
+		switch (type)
+		{
+		case Widget::TouchEventType::ENDED:
+			if (LoginScene::state)
+			{
+				local_server->localplayer->lord_point = 3;
+			}
+			else
+			{
+				local_client->localplayer->lord_point = 3;
+			}
+			a->removeFromParent();
+			b->removeFromParent();
+			c->removeFromParent();
+			d->removeFromParent();
+		}
+	});
+	addChild(three_button);
+	return three_button;
+}
+
+void GameScene::ArrangePokers(vector<PokerCard>& handpoker)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	handpoker[handpoker.size() / 2].card_picture->setPosition(visibleSize.width / 2, 150);//set center poker
@@ -213,4 +355,3 @@ bool GameScene::ArrangeoutPokers(Player* x)
 	x->outpoker.erase(x->outpoker.begin(), x->outpoker.end());//在以后需要改动
 	return true;
 }
-vector<int> GameScene::card;

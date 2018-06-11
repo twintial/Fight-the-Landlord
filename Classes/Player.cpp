@@ -7,6 +7,7 @@ Player::Player()
 	vector<int>hand;
 	status = -1;
 	lord_point = -1;
+	playercode = -1;
 	isready = false;
 }
 Player& Player::operator=(Player& x)

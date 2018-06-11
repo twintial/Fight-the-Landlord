@@ -9,7 +9,8 @@ size_t read_complete_client(char * buff, const boost::system::error_code & err, 
 
 Client::Client(Player* local, GameScene* scene) :sock(service)
 {
-	isadd[0] = isadd[1] = 0;
+	max_point = -1;
+	now_lord = -1;
 	already_read = 0;
 	connect = false;
 	isroomjoin = false;
@@ -47,19 +48,19 @@ int Client::CreateConnect()
 	if (localplayer->playercode == 2)
 	{
 		string leftname = read_msg();
-		boost::this_thread::sleep(boost::posix_time::millisec(100));
+	
 		AddLeftName(leftname);
 		string rightname = read_msg();
-		boost::this_thread::sleep(boost::posix_time::millisec(100));
+
 		AddRightName(rightname);
 	}
 	if (localplayer->playercode == 3)
 	{
 		string rightname = read_msg();
-		boost::this_thread::sleep(boost::posix_time::millisec(100));
+		//boost::this_thread::sleep(boost::posix_time::millisec(100));
 		AddRightName(rightname);
 		string leftname = read_msg();
-		boost::this_thread::sleep(boost::posix_time::millisec(100));
+		//boost::this_thread::sleep(boost::posix_time::millisec(100));
 		AddLeftName(leftname);
 	}
 	log("play_num=%d", localplayer->playercode);
@@ -77,7 +78,7 @@ void Client::ReadyMsg()
 {
 	while (true)
 	{
-		log("%d",isallready);
+		//log("%d",isallready);
 		if (isroomjoin && !isallready)
 		{
 			char ready[1];
@@ -111,7 +112,6 @@ void Client::DealAndSnatchlandlord()
 {
 	try
 	{
-		localplayer->hand.resize(17);
 		while (true)
 		{
 			if (isallready)
@@ -119,9 +119,48 @@ void Client::DealAndSnatchlandlord()
 				if (!ishandreceive)
 				{
 					sock.read_some(buffer(localplayer->hand));
-					Operation::CardSort(*localplayer);
 					ishandreceive = true;
 				}
+				sock.read_some(buffer(now_choose));
+				//目前的最高地主分
+				for (int i = 0; i <= 2; i++)
+				{
+					if (localplayer->playercode == now_choose[0])
+					{
+						while (true)
+						{
+						    if (localplayer->lord_point != -1)
+							{
+								char local_lordpoint[1];
+								local_lordpoint[0] = localplayer->lord_point;
+								sock.write_some(buffer(local_lordpoint));
+								if (local_lordpoint[0] > max_point)
+								{
+									max_point = local_lordpoint[0];
+									now_lord = now_choose[0];
+								}
+								break;
+							}
+						}
+					}
+					else
+					{
+						char remote_lordpoint[1];
+						sock.read_some(buffer(remote_lordpoint));
+						if (remote_lordpoint[0] > max_point)
+						{
+							max_point = remote_lordpoint[0];
+							now_lord = now_choose[0];
+						}
+					}
+					if (max_point == 3)
+					{
+						break;
+					}
+					now_choose[0]++;
+					now_choose[0] = now_choose[0] > 3 ? (now_choose[0] - 3) : now_choose[0];
+				}
+				break;
 			}
 		}
 	}

@@ -45,13 +45,15 @@ public:
 private:
 	player_data_before_start_client datas;
 	int already_read;
+	int max_point;
+	int now_lord;
 	bool connect;
 	bool isroomjoin;
 	bool isallready;
 	bool ishandreceive;
+	char now_choose[1];
 	Player* localplayer;
 	GameScene* localscene;
 	ip::tcp::socket sock;
-	int isadd[2];//其余玩家是否已经添加
 };
 #endif

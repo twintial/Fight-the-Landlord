@@ -54,7 +54,10 @@ private:
 	bool isroomjoin;
 	bool isallready;
 	int already_read;
+	int max_point;
+	int now_lord;
+	char now_choose[1];
 	Player* localplayer;
-	GameScene* localscene;
+	GameScene* localscene;//无法利用localscene添加牌，原因不明
 };
 #endif

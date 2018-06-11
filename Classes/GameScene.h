@@ -10,24 +10,31 @@
 #include"Client.h"
 #include"Server.h"
 using namespace std;
+using namespace ui;
 class GameScene:public cocos2d::Scene
 {
 public:
-
+	friend class Server;
+	friend class Client;
 	static cocos2d::Scene* CreateScene();
 	virtual bool init();
-	Sprite* PointButton_0();
 	Sprite* SkipButton();
 	Sprite* PlayButton();
 	void ReadyButton();
+
 	void Settingbackgroud();
-	void ArrangePokers_1(vector<PokerCard>& handpoker);
-	void timehandle(float t);//
+	void ArrangePokers(vector<PokerCard>& handpoker);
+	void ArrangePoker_Online(float t);
+	void ArrangeLordbutton(float t);
 	bool ArrangeoutPokers(Player*);
 	void ArrangeHandPokers_afterplay(Player* x);
+	Button* PointButton_0();
+	Button* PointButton_1();
+	Button* PointButton_2();
+	Button* PointButton_3();
 	CREATE_FUNC(GameScene);
 private:
 	static vector<int> card;
-	Player* local;
+	Player* local;//再gamescene上添加牌时使用，其手牌为整理过。
 };
 #endif

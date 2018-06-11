@@ -4,6 +4,7 @@ USING_NS_CC;
 extern char players[1] = { 0 };
 int ready_players[3] = { 0 };//0,1为client 2为host
 int hastold[2] = { 0 };
+
 vector<socket_ptr> client;
 vector<string> users_name;
 boost::recursive_mutex cs;//保证线程安全
@@ -21,8 +22,11 @@ Server::Server(Player* local, GameScene* scene)
 
 	datas.player_num = 0;
 	datas.isgamestart = 0;
-
+	max_point = -1;
+	now_lord = -1;
 	already_read = 0;
+	now_choose[0] = -1;
+
 	localplayer = new Player();
 	localplayer->username = local->username;
 	localplayer->IP = local->IP;
@@ -33,6 +37,7 @@ void Server::CreateAccept()
 {
 	AddLocalName();
 	players[0]++;
+	localplayer->playercode = players[0];
 	users_name.push_back(localplayer->username);
 	memcpy(datas.a_username, localplayer->username.c_str(), sizeof(localplayer->username));//将服务器的玩家作为a
 	io_service service;
@@ -50,25 +55,29 @@ void Server::CreateAccept()
 		users_name.push_back(connected_name);
 
 		sock->write_some(buffer(players));//给刚连接的玩家传入玩家数目（由于不能发送int类型，用char代替）
+		boost::this_thread::sleep(boost::posix_time::millisec(100));
 		if (players[0] == 2)
 		{
 			string userhost = users_name[0] + '\n';
 			sock->write_some(buffer(userhost));
+			boost::this_thread::sleep(boost::posix_time::millisec(100));
 		}
 		else if (players[0] == 3)
 		{
 			//发送给3号玩家
 			string userhost = users_name[0] + '\n';
 			sock->write_some(buffer(userhost));
+			boost::this_thread::sleep(boost::posix_time::millisec(100));
 			string user_2 = users_name[1] + '\n';
 			sock->write_some(buffer(user_2));
+			boost::this_thread::sleep(boost::posix_time::millisec(100));
 			//发送给2号玩家三号的情况
 			string user_3 = users_name[2] + '\n';
 			client[0]->write_some(buffer(user_3));
 		}
 		client.push_back(sock);
 		log("num=%d", client.size());
-		boost::this_thread::sleep(boost::posix_time::millisec(100));//sleep
+		//boost::this_thread::sleep(boost::posix_time::millisec(100));
 		AddRemoteName();
 		if (players[0] == 3)
 		{
@@ -88,8 +97,8 @@ void Server::ReadyMsg()
 	{
 		if (isroomjoin && (hastold[0] == 0 || hastold[1] == 0))
 		{
-			log("0=%d", hastold[0]);
-			log("1=%d", hastold[1]);
+			//log("0=%d", hastold[0]);
+			//log("1=%d", hastold[1]);
 			//host是否准备
 			if (localplayer->isready)
 			{
@@ -127,10 +136,10 @@ void Server::ReadyMsg()
 				{
 					hastold[i] = 1;
 				}
-				if (hastold[0] == 1 && hastold[1] == 1)
-				{
-					break;
-				}
+				//if (hastold[0] == 1 && hastold[1] == 1)
+				//{
+				//	break;
+				//}
 			}
 		}
 	}
@@ -149,7 +158,6 @@ void Server::DealAndSnatchlandlord()
 	auto c = new Player();
 	//发牌
 	Operation::CardDeal(*localplayer, *b, *c, card);
-	Operation::CardSort(*localplayer);
 	while (true)
 	{
 		if (hastold[0] == 1 && hastold[1] == 1)
@@ -160,6 +168,58 @@ void Server::DealAndSnatchlandlord()
 				client[1]->write_some(buffer(c->hand));
 				ishandsend = true;
 			}
+			boost::this_thread::sleep(boost::posix_time::millisec(100));
+			//选地主
+			srand((unsigned)time(NULL));
+			now_choose[0] = rand() % 3 + 1;
+			//向客户端传输第一个选的人
+			client[0]->write_some(buffer(now_choose));
+			client[1]->write_some(buffer(now_choose));
+			log("nowchoose=%d", now_choose[0]);
+			//目前的最高地主分
+			for (int i = 0; i <= 2; i++)
+			{
+				if (localplayer->playercode == now_choose[0])
+				{
+
+					while (true)
+					{
+						if (localplayer->lord_point != -1)
+						{
+							log("lord_point=%d", localplayer->lord_point);
+							char local_lordpoint[1];
+							local_lordpoint[0] = localplayer->lord_point;
+							client[0]->write_some(buffer(local_lordpoint));
+							client[1]->write_some(buffer(local_lordpoint));
+							if (local_lordpoint[0] > max_point)
+							{
+								max_point = local_lordpoint[0];
+								now_lord = now_choose[0];
+							}
+							break;
+						}
+					}
+				}
+				else
+				{
+					char remote_lordpoint[1];
+					client[now_choose[0] - 2]->read_some(buffer(remote_lordpoint));
+					//转发给另一个客户端玩家
+					client[3 - now_choose[0]]->write_some(buffer(remote_lordpoint));
+					if (remote_lordpoint[0] > max_point)
+					{
+						max_point = remote_lordpoint[0];
+						now_lord = now_choose[0];
+					}
+				}
+				if (max_point == 3)
+				{
+					break;
+				}
+				now_choose[0]++;
+				now_choose[0] = now_choose[0] > 3 ? (now_choose[0] - 3) : now_choose[0];
+			}
+			break;
 		}
 	}
 }

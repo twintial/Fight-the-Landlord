@@ -35,6 +35,23 @@ void StartScene::SettingBackgroud()
 
 	Sprite::create("king_b.png");Sprite::create("king_s.png");
 
+
+	Sprite::create("m_fangkuai_1.png"); Sprite::create("m_fangkuai_2.png"); Sprite::create("m_fangkuai_3.png"); Sprite::create("m_fangkuai_4.png"); Sprite::create("m_fangkuai_5.png"); Sprite::create("m_fangkuai_6.png");
+	Sprite::create("m_fangkuai_7.png"); Sprite::create("m_fangkuai_8.png"); Sprite::create("m_fangkuai_9.png"); Sprite::create("m_fangkuai_10.png"); Sprite::create("m_fangkuai_J.png"); Sprite::create("m_fangkuai_Q.png"); Sprite::create("m_fangkuai_K.png");
+
+	Sprite::create("m_heitao_1.png");	Sprite::create("m_heitao_2.png"); Sprite::create("m_heitao_3.png"); Sprite::create("m_heitao_4.png"); Sprite::create("m_heitao_5.png"); Sprite::create("m_heitao_6.png");
+	Sprite::create("m_heitao_7.png"); Sprite::create("m_heitao_8.png"); Sprite::create("m_heitao_9.png"); Sprite::create("m_heitao_10.png"); Sprite::create("m_heitao_J.png"); Sprite::create("m_heitao_Q.png"); Sprite::create("m_heitao_K.png");
+
+	Sprite::create("m_hongxin_1.png"); Sprite::create("m_hongxin_2.png"); Sprite::create("m_hongxin_3.png"); Sprite::create("m_hongxin_4.png"); Sprite::create("m_hongxin_5.png"); Sprite::create("m_hongxin_6.png");
+	Sprite::create("m_hongxin_7.png"); Sprite::create("m_hongxin_8.png"); Sprite::create("m_hongxin_9.png");	Sprite::create("m_hongxin_10.png");	Sprite::create("m_hongxin_J.png"); Sprite::create("m_hongxin_Q.png"); Sprite::create("m_hongxin_K.png");
+
+	Sprite::create("m_meihua_1.png"); Sprite::create("m_meihua_2.png"); Sprite::create("m_meihua_3.png"); Sprite::create("m_meihua_4.png"); Sprite::create("m_meihua_5.png"); Sprite::create("m_meihua_6.png");
+	Sprite::create("m_meihua_7.png"); Sprite::create("m_meihua_8.png"); Sprite::create("m_meihua_9.png"); Sprite::create("m_meihua_10.png"); Sprite::create("m_meihua_J.png"); Sprite::create("m_meihua_Q.png"); Sprite::create("m_meihua_K.png");
+
+	Sprite::create("m_king_b.png"); Sprite::create("m_king_s.png");
+
+	Sprite::create("point_0.png"); Sprite::create("point_1.png"); Sprite::create("point_2.png"); Sprite::create("point_3.png");
+
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto background = Sprite::create("Sbackground.jpg");
 	background->setPosition(visibleSize / 2);

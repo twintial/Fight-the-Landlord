@@ -18,6 +18,5 @@ public:
     static void OutCardSort(Player&);
 	static int CardType(Player&);
 private:
-	//Player Lord;
 };
 #endif
