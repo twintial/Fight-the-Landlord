@@ -174,14 +174,7 @@ void Client::DealAndSnatchlandlord()
 		localplayer->hand.push_back(lord_poker[1]);
 		localplayer->hand.push_back(lord_poker[2]);
 		//localplayer的最后三张为地主牌，localplayer牌不再使用
-		if (now_lord == localplayer->playercode)
-		{
-			islord = 1;
-		}
-		else
-		{
-			islord = 0;
-		}
+		islord = now_lord == localplayer->playercode ? 1 : 0;
 	}
 	catch (boost::system::system_error e)
 	{

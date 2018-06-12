@@ -107,10 +107,13 @@ void GameScene::ArrangePoker_before(float t)
 void GameScene::ArrangePoker_lord(float t)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto lord_mark = Sprite::create("lordmark.png");
+	lord_mark->setPosition(visibleSize / 2);
 	if (LoginScene::state)
 	{
 		if (local_server->islord != -1)
 		{
+			addChild(lord_mark);
 			//在屏幕最上方添加地主牌
 			auto temp_player = Player();
 			temp_player.hand.resize(3);
@@ -152,18 +155,22 @@ void GameScene::ArrangePoker_lord(float t)
 						}
 					}
 				}
-				this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));
+				//添加地主标志
+				lord_mark->runAction(MoveTo::create(1, Point(60, 80)));
 			}
 			else
 			{
-				this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));
+				int delta = local_server->now_lord == 3 ? -1 : 1;
+				lord_mark->runAction(MoveTo::create(1, Point(visibleSize.width / 2 + delta * 580, 550)));
 			}
+			this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));
 		}
 	}
 	else
 	{
 		if (local_client->islord != -1)
 		{
+			addChild(lord_mark);
 			//在屏幕最上方添加地主牌
 			auto temp_player = Player();
 			temp_player.hand.resize(3);
@@ -204,12 +211,22 @@ void GameScene::ArrangePoker_lord(float t)
 						}
 					}
 				}
-				this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));
+				lord_mark->runAction(MoveTo::create(1, Point(60, 80)));
 			}
 			else
 			{
-				this->unschedule(schedule_selector(GameScene::ArrangePoker_before));
+				if (local_client->localplayer->playercode == 2)
+				{
+					int delta = local_client->now_lord == 1 ? -1 : 1;
+					lord_mark->runAction(MoveTo::create(1, Point(visibleSize.width / 2 + delta * 580, 550)));
+				}
+				else
+				{
+					int delta = local_client->now_lord == 2 ? -1 : 1;
+					lord_mark->runAction(MoveTo::create(1, Point(visibleSize.width / 2 + delta * 580, 550)));
+				}
 			}
+			this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));
 		}
 	}
 }

@@ -235,14 +235,7 @@ void Server::DealAndSnatchlandlord()
 	localplayer->hand.push_back(card[52]);
 	localplayer->hand.push_back(card[53]);
 	//localplayer的最后三张为地主牌，localplayer牌不再使用
-	if (now_lord == localplayer->playercode)
-	{
-		islord = 1;
-	}
-	else
-	{
-		islord = 0;
-	}
+	islord = now_lord == localplayer->playercode ? 1 : 0;
 }
 void Server::DealAndSnatchlandlord_thread()
 {
