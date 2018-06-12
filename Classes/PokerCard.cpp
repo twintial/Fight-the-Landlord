@@ -2,6 +2,7 @@
 USING_NS_CC;
 PokerCard::PokerCard(int num)
 {
+	this->num = num;
 	iostates = 0;
 	played = 0;
 	if (num <= 51)

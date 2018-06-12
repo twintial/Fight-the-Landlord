@@ -31,8 +31,8 @@ bool GameScene::init()
 	ReadyButton();
 
 	schedule(schedule_selector(GameScene::ArrangePoker_before),0.1);
-	schedule(schedule_selector(GameScene::ArrangePoker_lord), 1);
-	schedule(schedule_selector(GameScene::ArrangeLordbutton), 1);
+	schedule(schedule_selector(GameScene::ArrangePoker_lord), 0.1);
+	schedule(schedule_selector(GameScene::ArrangeLordbutton), 0.1);
 	//创建连接服务器
 	if (LoginScene::state)
 	{
@@ -106,10 +106,26 @@ void GameScene::ArrangePoker_before(float t)
 }
 void GameScene::ArrangePoker_lord(float t)
 {
+	auto visibleSize = Director::getInstance()->getVisibleSize();
 	if (LoginScene::state)
 	{
 		if (local_server->islord != -1)
 		{
+			//在屏幕最上方添加地主牌
+			auto temp_player = Player();
+			temp_player.hand.resize(3);
+			for (int i = 0; i <= 2; i++)
+			{
+				temp_player.hand[i] = local_server->localplayer->hand[i + 17];
+			}
+			Operation::CardSort(temp_player);
+			for (int i = 0; i <= 2; i++)
+			{
+				temp_player.handpoker[i].m_card_picture->setPosition(visibleSize.width / 2 + 30 * (i - 1), visibleSize.height / 2 + 300);
+				addChild(temp_player.handpoker[i].m_card_picture);
+			}
+
+
 			if (local_server->islord)
 			{
 				for (int i = 0; i <= 16; i++)
@@ -120,10 +136,22 @@ void GameScene::ArrangePoker_lord(float t)
 				local->handpoker.erase(local->handpoker.begin(), local->handpoker.end());
 				for (int i = 0; i <= 19; i++)
 				{
-					local->hand[i] = local_server->localplayer->hand[i];
+					local->hand[i] = local_server->localplayer->hand[i];//这三张牌就是local_server->localplayer->hand[i]的最后三张
 				}
 				Operation::CardSort(*local);
 				ArrangePokers(local->handpoker);
+				//使地主牌突出
+				for (int i = 0; i <= local->handpoker.size() - 1; i++)
+				{
+					for (int j = 0; j <= 2; j++)
+					{
+						if (local->handpoker[i].num == local_server->localplayer->hand[j + 17])
+						{
+							local->handpoker[i].card_picture->setPosition(local->handpoker[i].card_picture->getPositionX(), local->handpoker[i].card_picture->getPositionY() + 28);
+							local->handpoker[i].iostates = 1;
+						}
+					}
+				}
 				this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));
 			}
 			else
@@ -136,6 +164,20 @@ void GameScene::ArrangePoker_lord(float t)
 	{
 		if (local_client->islord != -1)
 		{
+			//在屏幕最上方添加地主牌
+			auto temp_player = Player();
+			temp_player.hand.resize(3);
+			for (int i = 0; i <= 2; i++)
+			{
+				temp_player.hand[i] = local_client->localplayer->hand[i + 17];
+			}
+			Operation::CardSort(temp_player);
+			for (int i = 0; i <= 2; i++)
+			{
+				temp_player.handpoker[i].m_card_picture->setPosition(visibleSize.width / 2 + 30 * (i - 1), visibleSize.height / 2 + 300);
+				addChild(temp_player.handpoker[i].m_card_picture);
+			}
+
 			if (local_client->islord)
 			{
 				for (int i = 0; i <= 16; i++)
@@ -150,6 +192,18 @@ void GameScene::ArrangePoker_lord(float t)
 				}
 				Operation::CardSort(*local);
 				ArrangePokers(local->handpoker);
+				//使地主牌突出
+				for (int i = 0; i <= local->handpoker.size() - 1; i++)
+				{
+					for (int j = 0; j <= 2; j++)
+					{
+						if (local->handpoker[i].num == local_client->localplayer->hand[j + 17])
+						{
+							local->handpoker[i].card_picture->setPosition(local->handpoker[i].card_picture->getPositionX(), local->handpoker[i].card_picture->getPositionY() + 28);
+							local->handpoker[i].iostates = 1;
+						}
+					}
+				}
 				this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));
 			}
 			else

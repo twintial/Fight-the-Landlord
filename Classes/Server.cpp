@@ -223,21 +223,24 @@ void Server::DealAndSnatchlandlord()
 			break;
 		}
 	}
+	//将地主牌发给客户端玩家
+	vector<int>lord_poker;
+	lord_poker.push_back(card[51]);
+	lord_poker.push_back(card[52]);
+	lord_poker.push_back(card[53]);
+	client[0]->write_some(buffer(lord_poker));
+	client[1]->write_some(buffer(lord_poker));
 	//添加地主牌
+	localplayer->hand.push_back(card[51]);
+	localplayer->hand.push_back(card[52]);
+	localplayer->hand.push_back(card[53]);
+	//localplayer的最后三张为地主牌，localplayer牌不再使用
 	if (now_lord == localplayer->playercode)
 	{
-		localplayer->hand.push_back(card[51]);
-		localplayer->hand.push_back(card[52]);
-		localplayer->hand.push_back(card[53]);
 		islord = 1;
 	}
 	else
 	{
-		vector<int>lord_poker;
-		lord_poker.push_back(card[51]);
-		lord_poker.push_back(card[52]);
-		lord_poker.push_back(card[53]);
-		client[now_lord - 2]->write_some(buffer(lord_poker));
 		islord = 0;
 	}
 }
@@ -321,7 +324,7 @@ void Server::DealAndSnatchlandlord_thread()
 void Server::AddLocalName()
 {
 	auto localusername = LabelTTF::create(localplayer->username, "arial", 30);
-	localusername->setPosition(110, 100);
+	localusername->setPosition(130, 40);
 	localscene->addChild(localusername);
 }
 void Server::AddRemoteName()

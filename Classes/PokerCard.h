@@ -18,6 +18,7 @@ public:
 	friend class Server;//
 	~PokerCard();
 private:
+	int num;
 	int card_number;
 	int kind;
 	mutable int iostates;
