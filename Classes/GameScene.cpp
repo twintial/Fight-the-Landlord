@@ -161,7 +161,7 @@ void GameScene::ArrangePoker_lord(float t)
 			else
 			{
 				int delta = local_server->now_lord == 3 ? -1 : 1;
-				lord_mark->runAction(MoveTo::create(1, Point(visibleSize.width / 2 + delta * 580, 550)));
+				lord_mark->runAction(MoveTo::create(1, Point(visibleSize.width / 2 + delta * 570, 550)));
 			}
 			this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));
 		}
@@ -218,12 +218,12 @@ void GameScene::ArrangePoker_lord(float t)
 				if (local_client->localplayer->playercode == 2)
 				{
 					int delta = local_client->now_lord == 1 ? -1 : 1;
-					lord_mark->runAction(MoveTo::create(1, Point(visibleSize.width / 2 + delta * 580, 550)));
+					lord_mark->runAction(MoveTo::create(1, Point(visibleSize.width / 2 + delta * 570, 550)));
 				}
 				else
 				{
 					int delta = local_client->now_lord == 2 ? -1 : 1;
-					lord_mark->runAction(MoveTo::create(1, Point(visibleSize.width / 2 + delta * 580, 550)));
+					lord_mark->runAction(MoveTo::create(1, Point(visibleSize.width / 2 + delta * 570, 550)));
 				}
 			}
 			this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));

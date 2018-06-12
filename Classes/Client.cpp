@@ -102,6 +102,7 @@ void Client::ReadyMsg()
 			if (isready[0])
 			{
 				isallready = true;
+				break;
 			}
 		}
 	}

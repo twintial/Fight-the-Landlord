@@ -37,11 +37,11 @@ public:
 	void DealAndSnatchlandlord();
 	void DealAndSnatchlandlord_thread();
 
-	void HandleRequest(socket_ptr sock);
-	void AnalyzeRequest(socket_ptr sock, string msg);
+	//void HandleRequest(socket_ptr sock);
+	//void AnalyzeRequest(socket_ptr sock, string msg);
 
-	void CreateLoop();
-	void Loop_thread();
+	//void CreateLoop();
+	//void Loop_thread();
 
 	void AddLocalName();
 	void AddRemoteName();

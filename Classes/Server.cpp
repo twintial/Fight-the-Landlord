@@ -137,10 +137,10 @@ void Server::ReadyMsg()
 				{
 					hastold[i] = 1;
 				}
-				//if (hastold[0] == 1 && hastold[1] == 1)
-				//{
-				//	break;
-				//}
+				if (hastold[0] == 1 && hastold[1] == 1)
+				{
+					break;
+				}
 			}
 		}
 	}
@@ -241,6 +241,8 @@ void Server::DealAndSnatchlandlord_thread()
 {
 	boost::thread DealAndSnatchlandlord(boost::bind(&Server::DealAndSnatchlandlord, this));
 }
+
+
 
 //void Server::HandleRequest(socket_ptr sock)
 //{

@@ -31,11 +31,11 @@ public:
 	void DealAndSnatchlandlord();
 	void DealAndSnatchlandlord_thread();
 
-	void Ask_to_server();
-	void HandleAnswer_unstart();
+	//void Ask_to_server();
+	//void HandleAnswer_unstart();
 
-	void CreateLoop();
-	void Loop_thread();
+	//void CreateLoop();
+	//void Loop_thread();
 
 	void AddLocalName();
 	void AddLeftName(string leftname);
