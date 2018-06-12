@@ -18,8 +18,8 @@ public:
 	friend class Client;
 	static cocos2d::Scene* CreateScene();
 	virtual bool init();
-	Sprite* SkipButton();
-	Sprite* PlayButton();
+	Button* SkipButton();
+	Button* PlayButton();
 	void ReadyButton();
 
 	void Settingbackgroud();

@@ -14,22 +14,14 @@ Player& Player::operator=(Player& x)
 {
 	return x;
 }
-void Player::Action(Sprite* skipbutton, Sprite* playbutton,GameScene* scene)
+void Player::Action(Button* skipbutton, Button* playbutton,GameScene* scene)
 {
 	//skip
-	auto listener_skip = EventListenerTouchOneByOne::create();
-	listener_skip->onTouchBegan = [skipbutton, listener_skip](Touch *t, Event *e)
+	skipbutton->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType type)
 	{
-		if (skipbutton->getBoundingBox().containsPoint(t->getLocation()))
+		switch (type)
 		{
-			listener_skip->setSwallowTouches(true);
-		}
-		return true;
-	};
-	listener_skip->onTouchEnded = [skipbutton, playbutton, this, listener_skip](Touch *t, Event *e)
-	{
-		if (skipbutton->getBoundingBox().containsPoint(t->getLocation()))
-		{
+		case cocos2d::ui::Widget::TouchEventType::ENDED:
 			skipbutton->removeFromParent();
 			playbutton->removeFromParent();
 			//使牌移回
@@ -41,29 +33,21 @@ void Player::Action(Sprite* skipbutton, Sprite* playbutton,GameScene* scene)
 					this->handpoker[i].iostates = 0;
 				}
 			}
+			break;
+		default:
+			break;
 		}
-		listener_skip->setSwallowTouches(false);
-	};
-	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener_skip, skipbutton);
-
+	});
 	//play
-	auto listener_play = EventListenerTouchOneByOne::create();
-	listener_play->onTouchBegan = [playbutton, listener_play](Touch *t, Event *e)
+	playbutton->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType type)
 	{
-		if (playbutton->getBoundingBox().containsPoint(t->getLocation()))
+		switch (type)
 		{
-			listener_play->setSwallowTouches(true);
-		}
-		return true;
-	};
-	listener_play->onTouchEnded = [skipbutton, playbutton, scene, this, listener_play](Touch *t, Event *e)
-	{
-		if (playbutton->getBoundingBox().containsPoint(t->getLocation()))
-		{
+		case cocos2d::ui::Widget::TouchEventType::ENDED:
 			for (int i = 0; i <= this->handpoker.size() - 1; i++)
 			{
 				if (this->handpoker[i].iostates == 1 && this->handpoker[i].played == 0)
-				{
+	    		{
 					this->outpoker.push_back(PokerCard(this->hand[i]));//可能增加打出牌
 				}
 			}
@@ -78,8 +62,8 @@ void Player::Action(Sprite* skipbutton, Sprite* playbutton,GameScene* scene)
 						this->handpoker[i].played = 1;//标记为打出,即符合牌型确定可出
 					}
 				}
-				//skipbutton->removeFromParent();
-				//playbutton->removeFromParent();
+				skipbutton->removeFromParent();
+				playbutton->removeFromParent();
 				scene->ArrangeoutPokers(this);
 				scene->ArrangeHandPokers_afterplay(this);
 			}
@@ -87,8 +71,7 @@ void Player::Action(Sprite* skipbutton, Sprite* playbutton,GameScene* scene)
 			{
 				this->outpoker.erase(this->outpoker.begin(), this->outpoker.end());
 			}
+			break;
 		}
-		listener_play->setSwallowTouches(false);
-	};
-	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener_play, playbutton);
+	});
 }//remain

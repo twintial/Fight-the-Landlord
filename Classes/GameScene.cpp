@@ -61,7 +61,6 @@ bool GameScene::init()
 	{
 		local_client->DealAndSnatchlandlord_thread();
 	}
-
 	return true;
 }
 void GameScene::Settingbackgroud()
@@ -280,20 +279,20 @@ void GameScene::ArrangeLordbutton(float t)
 	}
 }
 
-Sprite* GameScene::SkipButton()
+Button* GameScene::SkipButton()
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
-	auto skip_button = Sprite::create("skipbutton.png");
-	skip_button->setPosition(visibleSize.width / 2 + 140, 305);
+	auto skip_button = Button::create("skipbutton.png");
+	skip_button->setPosition(Vec2(visibleSize.width / 2 + 140, 305));
 	skip_button->setScale(0.78f);
 	addChild(skip_button);
 	return skip_button;
 }//在operation中实现操作因此返回sprite
-Sprite* GameScene::PlayButton()
+Button* GameScene::PlayButton()
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
-	auto play_button = Sprite::create("playbutton.png");
-	play_button->setPosition(visibleSize.width / 2 - 140, 305);
+	auto play_button = Button::create("playbutton.png");
+	play_button->setPosition(Vec2(visibleSize.width / 2 - 140, 305));
 	play_button->setScale(0.78f);
 	addChild(play_button);
 	return play_button;

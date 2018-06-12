@@ -6,7 +6,9 @@
 #include<string>
 #include"PokerCard.h"
 #include"GameScene.h"
+#include "ui/CocosGUI.h"
 using namespace std;
+using namespace ui;
 class Player
 {
 public:
@@ -17,7 +19,7 @@ public:
 	friend class Server;
 	Player();
 	Player &operator= (Player&);
-	void Action(Sprite*, Sprite*, GameScene*);
+	void Action(Button*, Button*, GameScene*);
 private:
 	vector<int>hand;
 	vector<PokerCard> handpoker;
