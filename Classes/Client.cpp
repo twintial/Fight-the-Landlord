@@ -13,16 +13,26 @@ Client::Client(Player* local, GameScene* scene) :sock(service)
 	now_lord = -1;
 	already_read = 0;
 	islord = -1;
+	now_play = -1;
 
 	connect = false;
 	isroomjoin = false;
 	isallready = false;
 	ishandreceive = false;
+	isstart = false;
+	play_swith = false;
+	//isclick = false;
+	//isrecv_struct = false;
 
 	localplayer = new Player();
 	localplayer->username = local->username;
 	localplayer->IP = local->IP;
 	localscene = scene;
+	//初始化结构体
+	datas = new play_data;
+	datas->card_amount = 0;
+	datas->card_type = 0;
+	datas->isplay_pokers = false;
 }
 
 int Client::CreateConnect()
@@ -188,6 +198,31 @@ void Client::DealAndSnatchlandlord_thread()
 	boost::thread DealAndSnatchlandlord(boost::bind(&Client::DealAndSnatchlandlord, this));
 }
 
+void Client::Play()
+{
+	while (true)
+	{
+		if (isstart)
+		{
+			log("is=%d", isstart);
+			now_play = now_lord;
+			if (localplayer->playercode == now_play)
+			{
+
+			}
+			else
+			{
+				read_struct();
+				localscene->isrecv_struct = true;
+			}
+		}
+	}
+}
+void Client::Play_thread()
+{
+	boost::thread Play(boost::bind(&Client::Play, this));
+}
+
 //void Client::Ask_to_server()
 //{
 //	if (!GameScene::start)
@@ -320,4 +355,22 @@ string Client::read_msg()
 	int bytes = read(sock, buffer(pre), boost::bind(read_complete_client, pre, _1, _2));
 	string msg(pre, bytes - 1);
 	return msg;
+}
+void Client::read_struct()
+{
+	char rec_buff[512];
+	memset(rec_buff, 0, sizeof(rec_buff));
+	log("ready to read");
+	sock.read_some(buffer(rec_buff));
+	log("isread");
+	memset(datas, 0, sizeof(*datas));
+	memcpy(datas, rec_buff, sizeof(*datas));
+
+	log("ca=%d", datas->card_amount);
+	log("card_type=%d", datas->card_type);
+	log("%d", datas->isplay_pokers);
+	for (int i = 0; i <= datas->card_amount - 1; i++)
+	{
+		log("%d=%d", i, datas->out_poker[i]);
+	}
 }

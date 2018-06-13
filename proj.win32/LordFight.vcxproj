@@ -173,6 +173,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Player.h" />
     <ClInclude Include="..\Classes\PokerCard.h" />
     <ClInclude Include="..\Classes\Server.h" />
+    <ClInclude Include="..\Classes\Settings.h" />
     <ClInclude Include="..\Classes\StartScene.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>

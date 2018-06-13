@@ -18,6 +18,8 @@ bool GameScene::init()
 	{
 		return false;
 	}
+    isclick = false;
+	isrecv_struct = false;
 	if (LoginScene::state)
 	{
 		local_server = new Server(LoginScene::local, this);
@@ -33,33 +35,28 @@ bool GameScene::init()
 	schedule(schedule_selector(GameScene::ArrangePoker_before),0.1);
 	schedule(schedule_selector(GameScene::ArrangePoker_lord), 0.1);
 	schedule(schedule_selector(GameScene::ArrangeLordbutton), 0.1);
+	schedule(schedule_selector(GameScene::LocalPlay), 0.1);
 	//创建连接服务器
 	if (LoginScene::state)
 	{
+		//创建连接服务器
 		local_server->Accept_thread();
+		//准备状况
+		local_server->ReadyMsg_thread();
+		//发牌，抢地主
+		local_server->DealAndSnatchlandlord_thread();
+		//开始游戏
+		local_server->Play_thread();
 	}
 	else
 	{
 		local_client->Connect_thread();
-	}
-	//数据传输
-	//准备状况
-	if (LoginScene::state)
-	{
-		local_server->ReadyMsg_thread();
-	}
-	else
-	{
+		//准备状况
 		local_client->ReadyMsg_thread();
-	}
-	//发牌，抢地主
-	if (LoginScene::state)
-	{
-		local_server->DealAndSnatchlandlord_thread();
-	}
-	else
-	{
+		//发牌，抢地主
 		local_client->DealAndSnatchlandlord_thread();
+		//开始游戏
+		local_client->Play_thread();
 	}
 	return true;
 }
@@ -162,6 +159,7 @@ void GameScene::ArrangePoker_lord(float t)
 				int delta = local_server->now_lord == 3 ? -1 : 1;
 				lord_mark->runAction(MoveTo::create(1, Point(visibleSize.width / 2 + delta * 570, 550)));
 			}
+			local_server->isstart = true;
 			this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));
 		}
 	}
@@ -225,6 +223,7 @@ void GameScene::ArrangePoker_lord(float t)
 					lord_mark->runAction(MoveTo::create(1, Point(visibleSize.width / 2 + delta * 570, 550)));
 				}
 			}
+			local_client->isstart = true;
 			this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));
 		}
 	}
@@ -275,6 +274,53 @@ void GameScene::ArrangeLordbutton(float t)
 				c->setTouchEnabled(false);
 			}
 			this->unschedule(schedule_selector(GameScene::ArrangeLordbutton));
+		}
+	}
+}
+void GameScene::LocalPlay(float t)
+{
+	if (LoginScene::state)
+	{
+		if (local_server->play_swith)
+		{
+			auto skip = SkipButton();
+			auto play = PlayButton();
+			local->Action(skip, play, local_server->datas, this);
+			local_server->play_swith = false;
+		}
+		else
+		{
+			//接收别人的datas数据包，将其他玩家打的牌加入屏幕中
+		}
+	}
+	else
+	{
+		if (local_client->play_swith)
+		{
+			local_server->play_swith = false;
+		}
+		else
+		{
+			//如果接受到了数据包
+			if (isrecv_struct)
+			{
+				log("isplay?=%d", local_client->datas->isplay_pokers);
+				if (!local_client->datas->isplay_pokers)
+				{
+					//添加不出
+				}
+				else
+				{
+					//添加这位玩家出的牌
+					vector<PokerCard> temp;
+					for (int i = 0; i <= local_client->datas->card_amount - 1; i++)
+					{
+						temp.push_back(PokerCard(local_client->datas->out_poker[i]));
+					}
+					ArrangeoutPokers_remote(temp);
+				}
+				isrecv_struct = false;
+			}
 		}
 	}
 }
@@ -480,6 +526,26 @@ bool GameScene::ArrangeoutPokers(Player* x)
 	{
 		addChild(x->outpoker[i].m_card_picture);
 	}
-	x->outpoker.erase(x->outpoker.begin(), x->outpoker.end());//在以后需要改动
+	//x->outpoker.erase(x->outpoker.begin(), x->outpoker.end());//在以后需要改动
+	return true;
+}
+bool GameScene::ArrangeoutPokers_remote(vector<PokerCard> remote_outpoker)
+{
+	if (remote_outpoker.size() == 0)
+	{
+		return false;
+	}
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	remote_outpoker[remote_outpoker.size() / 2].m_card_picture->setPosition(visibleSize.width / 2, 400);/////////
+	size_t cx = remote_outpoker[remote_outpoker.size() / 2].m_card_picture->getPositionX();
+	for (int i = 0; i <= remote_outpoker.size() - 1; i++)
+	{
+		remote_outpoker[i].m_card_picture->setPosition(cx + 30 * (i - (remote_outpoker.size() / 2)), 400);
+	}
+	for (int i = 0; i <= remote_outpoker.size() - 1; i++)
+	{
+		addChild(remote_outpoker[i].m_card_picture);
+		log("added");
+	}
 	return true;
 }

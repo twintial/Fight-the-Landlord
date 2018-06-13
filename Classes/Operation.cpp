@@ -148,24 +148,6 @@ void Operation::OutCardSort(Player& x)
 }
 int Operation::CardType(Player& x)
 {
-	enum CardType
-	{
-		ERROR_TYPE = 0,
-		SINGLE_CARD,//单牌
-		PAIR,//对子
-		TRIPLET,//葫芦
-		TRIPLET_SINGLE,//三带一
-		TRIPLET_PAIR,//三带二
-		SEQUENCE,//顺子
-		SEQUENCE_OF_PAIR,//连对
-		SEQUENCE_OF_TRIPLET,//飞机
-		SEQUENCE_OF_TRIPLET_SINGLE,
-		SEQUENCE_OF_TRIPLET_PAIR,
-		BOMB,//炸弹
-		ROCKET,//王炸
-		QUADPLEX_TWO_SINGLE,//四带一*2
-		QUADPLEX_TWO_PAIR,//四带二*2
-	};
 	if (x.outpoker.empty())
 	{
 		return ERROR_TYPE;
@@ -335,4 +317,61 @@ int Operation::CardType(Player& x)
 		}
 	}
 	return ERROR_TYPE;
+}
+int Operation::TypeCompare(Player& x, play_data* datas)
+{
+	int my_tpye = CardType(x);
+	if (my_tpye == ERROR_TYPE)
+	{
+		return 0;
+	}
+	//能出的牌都可以出，即目前场上无牌
+	if (datas->card_type == ERROR_TYPE)
+	{
+		return 1;
+	}
+	auto first = PokerCard(datas->out_poker[0]);
+	//先判断出牌数量
+	if (x.outpoker.size() == datas->card_amount)
+	{
+		//判断牌型一致
+		if (my_tpye == ROCKET)
+		{
+			return 1;
+		}
+		if (my_tpye == datas->card_type)
+		{
+			if (x.outpoker[0].card_number > first.card_number)
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	else if (my_tpye == BOMB)//如果我出的是炸弹
+	{
+		if (datas->card_type == ROCKET)
+		{
+			return 0;
+		}
+		else
+		{
+			return 1;
+		}
+	}
+	else if(my_tpye==ROCKET)//如果我出的是王炸
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
 }

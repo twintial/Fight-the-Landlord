@@ -52,6 +52,8 @@ void StartScene::SettingBackgroud()
 
 	Sprite::create("point_0.png"); Sprite::create("point_1.png"); Sprite::create("point_2.png"); Sprite::create("point_3.png");
 
+	Sprite::create("playbutton.png"); Sprite::create("skipbutton.png");
+
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto background = Sprite::create("Sbackground.jpg");
 	background->setPosition(visibleSize / 2);

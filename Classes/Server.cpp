@@ -19,19 +19,28 @@ Server::Server(Player* local, GameScene* scene)
 	isroomjoin = false;
 	isallready = false;
 	ishandsend = false;
+	isstart = false;
+	play_swith = false;
+	//isclick = false;
+	//isrecv_struct = false;
 
-	datas.player_num = 0;
-	datas.isgamestart = 0;
 	max_point = -1;
 	now_lord = -1;
 	already_read = 0;
 	now_choose[0] = -1;
 	islord = -1;
+	now_play = -1;
 
 	localplayer = new Player();
 	localplayer->username = local->username;
 	localplayer->IP = local->IP;
 	localscene = scene;
+	//初始化结构体
+	datas = new play_data;
+	datas->card_amount = 0;
+	datas->card_type = 0;
+	datas->isplay_pokers = false;
+
 }
 
 void Server::CreateAccept()
@@ -40,7 +49,7 @@ void Server::CreateAccept()
 	players[0]++;
 	localplayer->playercode = players[0];
 	users_name.push_back(localplayer->username);
-	memcpy(datas.a_username, localplayer->username.c_str(), sizeof(localplayer->username));//将服务器的玩家作为a
+	//memcpy(datas.a_username, localplayer->username.c_str(), sizeof(localplayer->username));//将服务器的玩家作为a
 	io_service service;
 	ip::tcp::acceptor acceptor(service, ip::tcp::endpoint(ip::tcp::v4(), 8080));
 	while (1)
@@ -50,7 +59,7 @@ void Server::CreateAccept()
 		acceptor.accept(*sock);
 
 		players[0]++;
-		datas.player_num++;
+		/*datas.player_num++;*/
 
 		string connected_name = read_msg(sock);
 		users_name.push_back(connected_name);
@@ -176,7 +185,7 @@ void Server::DealAndSnatchlandlord()
 			//向客户端传输第一个选的人
 			client[0]->write_some(buffer(now_choose));
 			client[1]->write_some(buffer(now_choose));
-			log("nowchoose=%d", now_choose[0]);
+			log("now choose=%d", now_choose[0]);
 			//目前的最高地主分
 			for (int i = 0; i <= 2; i++)
 			{
@@ -242,7 +251,52 @@ void Server::DealAndSnatchlandlord_thread()
 	boost::thread DealAndSnatchlandlord(boost::bind(&Server::DealAndSnatchlandlord, this));
 }
 
+void Server::Play()
+{
+	while (true)
+	{
+		log("isstart=%d", isstart);
+		if (isstart)
+		{
+			now_play = now_lord;
+			//开始游戏
+			//while (true)
+			//{
+				if (localplayer->playercode = now_play)
+				{
+					play_swith = true;
+					//等待点击
+					while (true)
+					{
+						//若点击给两个客户端发送数据包
+						if (localscene->isclick)
+						{
+							send_struct(client[0]);
+							send_struct(client[1]);
+							log("ca=%d", datas->card_amount);
+							log("card_type=%d", datas->card_type);
+							log("%d", datas->isplay_pokers);
+							for (int i = 0; i <= datas->card_amount - 1; i++)
+							{
+								log("%d=%d", i, datas->out_poker[i]);
+							}
+							localscene->isclick = false;
+							break;
+						}
+					}
+				}
+				else
+				{
 
+				}
+			//}
+		}
+	}
+}
+void Server::Play_thread()
+{
+	boost::thread Play(boost::bind(&Server::Play, this));
+}
 
 //void Server::HandleRequest(socket_ptr sock)
 //{
@@ -342,4 +396,11 @@ string Server::read_msg(socket_ptr sock)
 	int bytes = read(*sock, buffer(pre), boost::bind(read_complete_server, pre, _1, _2));
 	string msg(pre, bytes - 1);
 	return msg;
+}
+void Server::send_struct(socket_ptr sock)
+{
+	char msg[512];
+	memset(msg, 0, sizeof(msg));
+	memcpy(msg, datas, sizeof(*datas));
+	sock->write_some(buffer(msg));
 }
