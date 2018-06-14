@@ -39,7 +39,7 @@ Server::Server(Player* local, GameScene* scene)
 	datas = new play_data;
 	datas->card_amount = 0;
 	datas->card_type = 0;
-	datas->isplay_pokers = false;
+	datas->isplay_pokers = true;
 
 }
 
@@ -181,7 +181,7 @@ void Server::DealAndSnatchlandlord()
 			boost::this_thread::sleep(boost::posix_time::millisec(100));
 			//选地主
 			srand((unsigned)time(NULL));
-			now_choose[0] = 3;//test
+			now_choose[0] = rand() % 3 + 1;//test
 			//向客户端传输第一个选的人
 			client[0]->write_some(buffer(now_choose));
 			client[1]->write_some(buffer(now_choose));

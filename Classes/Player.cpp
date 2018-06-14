@@ -17,6 +17,10 @@ Player& Player::operator=(Player& x)
 }
 void Player::Action(Button* skipbutton, Button* playbutton, play_data* datas, GameScene* scene)
 {
+	if (scene->getChildByTag(3) != NULL)
+	{
+		local_skip->removeFromParent();
+	}
 	//skip
 	skipbutton->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType type)
 	{
@@ -27,6 +31,10 @@ void Player::Action(Button* skipbutton, Button* playbutton, play_data* datas, Ga
 			playbutton->removeFromParent();
 			//表明不出牌
 			datas->isplay_pokers = false;
+			local_skip = Sprite::create("skip.png");
+			local_skip->setTag(3);
+			local_skip->setPosition(612, 320);
+			scene->addChild(local_skip);
 			//使牌移回
 			for (int i = 0; i <= this->handpoker.size() - 1; i++)
 			{

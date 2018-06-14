@@ -32,7 +32,7 @@ Client::Client(Player* local, GameScene* scene) :sock(service)
 	datas = new play_data;
 	datas->card_amount = 0;
 	datas->card_type = 0;
-	datas->isplay_pokers = false;
+	datas->isplay_pokers = true;
 }
 
 int Client::CreateConnect()

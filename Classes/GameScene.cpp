@@ -12,6 +12,9 @@ Button* c;
 Button* d;
 Button* skip;
 Button* play;
+Sprite* left_skip;
+Sprite* right_skip;
+
 Scene* GameScene::CreateScene()
 {
 	return GameScene::create();
@@ -288,21 +291,54 @@ void GameScene::LocalPlay(float t)
 		if (local_server->play_swith)
 		{
 			ClearOutPokers(local->outpoker);
-			log("enter");
 			skip = SkipButton();
 			play = PlayButton();
-			log("button add");
 			local->Action(skip, play, local_server->datas, this);
+			if (getChildByTag(1) != NULL && getChildByTag(2) != NULL)
+			{
+				skip->setBright(false);
+				skip->setTouchEnabled(false);
+				//可以出任意合理牌
+				local_server->datas->card_type = 0;
+			}
 			local_server->play_swith = false;
 		}
 		else
 		{
+			////将出牌人的牌或不出删去
+
+			//if (local_server->now_play == 2)
+			//{
+			//	ClearOutPokers(right_pokers);
+			//}
+			//else
+			//{
+			//	ClearOutPokers(left_pokers);
+			//}
 			//接收别人的datas数据包，将其他玩家打的牌加入屏幕中
 			if (isrecv_struct)
 			{
 				if (!local_server->datas->isplay_pokers)
 				{
 					//添加不出
+					if (local_server->now_play == 2)
+					{
+						ClearOutPokers(right_pokers);
+						//添加右边不出
+						right_skip = Sprite::create("skip.png");
+						right_skip->setTag(2);
+						right_skip->setPosition(1050, 520);
+						addChild(right_skip);
+					}
+					else
+					{
+						ClearOutPokers(left_pokers);
+						//添加左边不出
+						left_skip = Sprite::create("skip.png");
+						left_skip->setTag(1);
+						left_skip->setPosition(174, 520);
+						addChild(left_skip);
+					}
 				}
 				else
 				{
@@ -340,10 +376,40 @@ void GameScene::LocalPlay(float t)
 			skip = SkipButton();
 			play = PlayButton();
 			local->Action(skip, play, local_client->datas, this);
+			if (getChildByTag(1) != NULL && getChildByTag(2) != NULL)
+			{
+				skip->setBright(false);
+				skip->setTouchEnabled(false);
+				//可以出任意合理牌
+				local_client->datas->card_type = 0;
+			}
 			local_client->play_swith = false;
 		}
 		else
 		{
+			////将出牌人的出牌或不出删去
+			//if (local_client->localplayer->playercode == 2)
+			//{
+			//	if (local_client->now_play == 1)
+			//	{
+			//		ClearOutPokers(left_pokers);
+			//	}
+			//	else
+			//	{
+			//		ClearOutPokers(right_pokers);
+			//	}
+			//}
+			//else
+			//{
+			//	if (local_client->now_play == 2)
+			//	{
+			//		ClearOutPokers(left_pokers);
+			//	}
+			//	else
+			//	{
+			//		ClearOutPokers(right_pokers);
+			//	}
+			//}
 			//如果接受到了数据包
 			if (isrecv_struct)
 			{
@@ -351,6 +417,48 @@ void GameScene::LocalPlay(float t)
 				if (!local_client->datas->isplay_pokers)
 				{
 					//添加不出
+					if (local_client->localplayer->playercode == 2)
+					{
+						if (local_client->now_play == 1)
+						{
+							ClearOutPokers(left_pokers);
+							//添加左边不出
+							left_skip = Sprite::create("skip.png");
+							left_skip->setTag(1);
+							left_skip->setPosition(174, 520);
+							addChild(left_skip);
+						}
+						else
+						{
+							ClearOutPokers(right_pokers);
+							//添加右边不出
+							right_skip = Sprite::create("skip.png");
+							right_skip->setTag(2);
+							right_skip->setPosition(1050, 520);
+							addChild(right_skip);
+						}
+					}
+					else
+					{
+						if (local_client->now_play == 2)
+						{
+							ClearOutPokers(left_pokers);
+							//添加左边不出
+							left_skip = Sprite::create("skip.png");
+							left_skip->setTag(1);
+							left_skip->setPosition(174, 520);
+							addChild(left_skip);
+						}
+						else
+						{
+							ClearOutPokers(right_pokers);
+							//添加右边不出
+							right_skip = Sprite::create("skip.png");
+							right_skip->setTag(2);
+							right_skip->setPosition(1050, 520);
+							addChild(right_skip);
+						}
+					}
 				}
 				else
 				{
@@ -617,7 +725,7 @@ bool GameScene::ArrangeOutPokers_remote_left(vector<PokerCard> &remote_outpoker)
 		return false;
 	}
 	auto visibleSize = Director::getInstance()->getVisibleSize();
-	remote_outpoker[0].m_card_picture->setPosition(visibleSize.width / 2 - 480, 520);
+	remote_outpoker[0].m_card_picture->setPosition(visibleSize.width / 2 - 460, 520);
 	size_t cx = remote_outpoker[0].m_card_picture->getPositionX();
 	for (int i = 0; i <= remote_outpoker.size() - 1; i++)
 	{
@@ -636,7 +744,7 @@ bool GameScene::ArrangeOutPokers_remote_right(vector<PokerCard> &remote_outpoker
 		return false;
 	}
 	auto visibleSize = Director::getInstance()->getVisibleSize();
-	remote_outpoker[remote_outpoker.size() - 1].m_card_picture->setPosition(visibleSize.width / 2 + 480, 520);
+	remote_outpoker[remote_outpoker.size() - 1].m_card_picture->setPosition(visibleSize.width / 2 + 460, 520);
 	size_t cx = remote_outpoker[remote_outpoker.size() - 1].m_card_picture->getPositionX();
 	for (int i = 0; i <= remote_outpoker.size() - 1; i++)
 	{
@@ -648,14 +756,65 @@ bool GameScene::ArrangeOutPokers_remote_right(vector<PokerCard> &remote_outpoker
 	}
 	return true;
 }
-void GameScene::ClearOutPokers(vector<PokerCard> &remote_outpoker)
+void GameScene::ClearOutPokers(vector<PokerCard> &outpokers)
 {
-	if (!remote_outpoker.empty())
+	if (LoginScene::state)
 	{
-		for (int i = 0; i <= remote_outpoker.size() - 1; i++)
+		if (local_server->now_play == 2)
 		{
-			remote_outpoker[i].m_card_picture->removeFromParent();
+			if (getChildByTag(2) != NULL)
+			{
+				right_skip->removeFromParent();
+			}
 		}
-		remote_outpoker.erase(remote_outpoker.begin(), remote_outpoker.end());
+		else if (local_server->now_play == 3)
+		{
+			if (getChildByTag(1) != NULL)
+			{
+				left_skip->removeFromParent();
+			}
+		}
+	}
+	else if (local_client->localplayer->playercode == 2)
+	{
+		if (local_client->now_play == 3)
+		{
+			if (getChildByTag(2) != NULL)
+			{
+				right_skip->removeFromParent();
+			}
+		}
+		else if (local_client->now_play == 1)
+		{
+			if (getChildByTag(1) != NULL)
+			{
+				left_skip->removeFromParent();
+			}
+		}
+	}
+	else if (local_client->localplayer->playercode == 3)
+	{
+		if (local_client->now_play == 1)
+		{
+			if (getChildByTag(2) != NULL)
+			{
+				right_skip->removeFromParent();
+			}
+		}
+		else if (local_client->now_play == 2)
+		{
+			if (getChildByTag(1) != NULL)
+			{
+				left_skip->removeFromParent();
+			}
+		}
+	}
+	if (!outpokers.empty())
+	{
+		for (int i = 0; i <= outpokers.size() - 1; i++)
+		{
+			outpokers[i].m_card_picture->removeFromParent();
+		}
+		outpokers.erase(outpokers.begin(), outpokers.end());
 	}
 }

@@ -33,5 +33,6 @@ private:
 	bool isplay_pokers;//ÊÇ·ñ³öÅÆ
 	string username;
 	string IP;
+	Sprite* local_skip;
 };
 #endif
