@@ -181,7 +181,7 @@ void Server::DealAndSnatchlandlord()
 			boost::this_thread::sleep(boost::posix_time::millisec(100));
 			//选地主
 			srand((unsigned)time(NULL));
-			now_choose[0] = rand() % 3 + 1;
+			now_choose[0] = 3;//test
 			//向客户端传输第一个选的人
 			client[0]->write_some(buffer(now_choose));
 			client[1]->write_some(buffer(now_choose));
@@ -260,9 +260,9 @@ void Server::Play()
 		{
 			now_play = now_lord;
 			//开始游戏
-			//while (true)
-			//{
-				if (localplayer->playercode = now_play)
+			while (true)
+			{
+				if (localplayer->playercode == now_play)
 				{
 					play_swith = true;
 					//等待点击
@@ -281,15 +281,20 @@ void Server::Play()
 								log("%d=%d", i, datas->out_poker[i]);
 							}
 							localscene->isclick = false;
+							now_play++;
+							now_play = now_play > 3 ? (now_play - 3) : now_play;
 							break;
 						}
 					}
 				}
 				else
 				{
-
+					read_struct(client[now_play - 2]);
+					send_struct(client[3 - now_play]);
+					localscene->isrecv_struct = true;
 				}
-			//}
+				boost::this_thread::sleep(boost::posix_time::millisec(1000));
+			}
 		}
 	}
 }
@@ -381,11 +386,11 @@ void Server::AddRemoteName()
 	auto remoteusername = LabelTTF::create(users_name[players[0] - 1], "arial", 30);
 	if (players[0] == 2)
 	{
-		remoteusername->setPosition(1100, 500);
+		remoteusername->setPosition(1154, 450);
 	}
 	else
 	{
-		remoteusername->setPosition(45, 500);
+		remoteusername->setPosition(70, 450);
 	}
 	localscene->addChild(remoteusername);
 }
@@ -403,4 +408,12 @@ void Server::send_struct(socket_ptr sock)
 	memset(msg, 0, sizeof(msg));
 	memcpy(msg, datas, sizeof(*datas));
 	sock->write_some(buffer(msg));
+}
+void Server::read_struct(socket_ptr sock)
+{
+	char rec_buff[512];
+	memset(rec_buff, 0, sizeof(rec_buff));
+	sock->read_some(buffer(rec_buff));
+	memset(datas, 0, sizeof(*datas));
+	memcpy(datas, rec_buff, sizeof(*datas));
 }

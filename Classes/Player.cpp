@@ -48,11 +48,11 @@ void Player::Action(Button* skipbutton, Button* playbutton, play_data* datas, Ga
 		switch (type)
 		{
 		case cocos2d::ui::Widget::TouchEventType::ENDED:
-			//如果之前的outpoker还没删除，删除
-			if (this->outpoker.size() != 0)
-			{
-				this->outpoker.erase(this->outpoker.begin(), this->outpoker.end());
-			}
+			////如果之前的outpoker还没删除，删除
+			//if (this->outpoker.size() != 0)
+			//{
+			//	this->outpoker.erase(this->outpoker.begin(), this->outpoker.end());
+			//}
 			for (int i = 0; i <= this->handpoker.size() - 1; i++)
 			{
 				if (this->handpoker[i].iostates == 1 && this->handpoker[i].played == 0)
@@ -71,9 +71,9 @@ void Player::Action(Button* skipbutton, Button* playbutton, play_data* datas, Ga
 						this->handpoker[i].played = 1;//标记为打出,即符合牌型确定可出
 					}
 				}
-				//skipbutton->removeFromParent();
-				//playbutton->removeFromParent();
-				scene->ArrangeoutPokers(this);
+				skipbutton->removeFromParent();
+				playbutton->removeFromParent();
+				scene->ArrangeOutPokers(this);
 				scene->ArrangeHandPokers_afterplay(this);
 
 				datas->card_amount = this->outpoker.size();

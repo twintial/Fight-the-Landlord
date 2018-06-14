@@ -47,6 +47,7 @@ public:
 
 	string read_msg();
 	void read_struct();
+	void send_struct();
 private:
 	int already_read;
 	int max_point;

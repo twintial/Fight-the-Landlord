@@ -339,6 +339,10 @@ int Operation::TypeCompare(Player& x, play_data* datas)
 		{
 			return 1;
 		}
+		if (my_tpye == BOMB && datas->card_type != BOMB)
+		{
+			return 1;
+		}
 		if (my_tpye == datas->card_type)
 		{
 			if (x.outpoker[0].card_number > first.card_number)

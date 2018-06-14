@@ -206,14 +206,32 @@ void Client::Play()
 		{
 			log("is=%d", isstart);
 			now_play = now_lord;
-			if (localplayer->playercode == now_play)
+			//开始游戏
+			while (true)
 			{
-
-			}
-			else
-			{
-				read_struct();
-				localscene->isrecv_struct = true;
+				if (localplayer->playercode == now_play)
+				{
+					play_swith = true;
+					//等待点击
+					while (true)
+					{
+						if (localscene->isclick)
+						{
+							//发送数据给服务器
+							send_struct();
+							localscene->isclick = false;
+							now_play++;
+							now_play = now_play > 3 ? (now_play - 3) : now_play;
+							break;
+						}
+					}
+				}
+				else
+				{
+					read_struct();
+					localscene->isrecv_struct = true;
+				}
+				boost::this_thread::sleep(boost::posix_time::millisec(1000));
 			}
 		}
 	}
@@ -339,13 +357,13 @@ void Client::AddLocalName()
 void Client::AddLeftName(string leftname)
 {
 	auto left_name = LabelTTF::create(leftname, "arial", 30);
-	left_name->setPosition(50, 500);
+	left_name->setPosition(70, 450);
 	localscene->addChild(left_name);
 }
 void Client::AddRightName(string rightname)
 {
 	auto right_name = LabelTTF::create(rightname, "arial", 30);
-	right_name->setPosition(1100, 500);
+	right_name->setPosition(1154, 450);
 	localscene->addChild(right_name);
 }
 
@@ -360,9 +378,7 @@ void Client::read_struct()
 {
 	char rec_buff[512];
 	memset(rec_buff, 0, sizeof(rec_buff));
-	log("ready to read");
 	sock.read_some(buffer(rec_buff));
-	log("isread");
 	memset(datas, 0, sizeof(*datas));
 	memcpy(datas, rec_buff, sizeof(*datas));
 
@@ -373,4 +389,11 @@ void Client::read_struct()
 	{
 		log("%d=%d", i, datas->out_poker[i]);
 	}
+}
+void Client::send_struct()
+{
+	char msg[512];
+	memset(msg, 0, sizeof(msg));
+	memcpy(msg, datas, sizeof(*datas));
+	sock.write_some(buffer(msg));
 }

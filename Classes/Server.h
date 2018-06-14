@@ -52,6 +52,7 @@ public:
 
 	string read_msg(socket_ptr sock);
 	void send_struct(socket_ptr sock);
+	void read_struct(socket_ptr sock);
 	static size_t isbulid;
 private:
 	bool ishandsend;

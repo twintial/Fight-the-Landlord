@@ -29,9 +29,11 @@ public:
 	void ArrangePoker_lord(float t);
 	void ArrangeLordbutton(float t);
 	void LocalPlay(float t);
-	bool ArrangeoutPokers(Player*);
-	bool ArrangeoutPokers_remote(vector<PokerCard>);
+	bool ArrangeOutPokers(Player*);
+	bool ArrangeOutPokers_remote_left(vector<PokerCard>&);
+	bool ArrangeOutPokers_remote_right(vector<PokerCard>&);
 	void ArrangeHandPokers_afterplay(Player* x);
+	void ClearOutPokers(vector<PokerCard>&);
 	Button* PointButton_0();
 	Button* PointButton_1();
 	Button* PointButton_2();

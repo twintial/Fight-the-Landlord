@@ -4,10 +4,14 @@ USING_NS_CC;
 Client * local_client;
 Server * local_server;
 vector<int> GameScene::card;
+vector<PokerCard> left_pokers;
+vector<PokerCard> right_pokers;
 Button* a;
 Button* b;
 Button* c;
 Button* d;
+Button* skip;
+Button* play;
 Scene* GameScene::CreateScene()
 {
 	return GameScene::create();
@@ -283,21 +287,60 @@ void GameScene::LocalPlay(float t)
 	{
 		if (local_server->play_swith)
 		{
-			auto skip = SkipButton();
-			auto play = PlayButton();
+			ClearOutPokers(local->outpoker);
+			log("enter");
+			skip = SkipButton();
+			play = PlayButton();
+			log("button add");
 			local->Action(skip, play, local_server->datas, this);
 			local_server->play_swith = false;
 		}
 		else
 		{
 			//接收别人的datas数据包，将其他玩家打的牌加入屏幕中
+			if (isrecv_struct)
+			{
+				if (!local_server->datas->isplay_pokers)
+				{
+					//添加不出
+				}
+				else
+				{
+					//添加这位玩家出的牌
+					if (local_server->now_play == 2)
+					{
+						ClearOutPokers(right_pokers);
+						for (int i = 0; i <= local_server->datas->card_amount - 1; i++)
+						{
+							right_pokers.push_back(PokerCard(local_server->datas->out_poker[i]));
+						}
+						ArrangeOutPokers_remote_right(right_pokers);
+					}
+					else
+					{
+						ClearOutPokers(left_pokers);
+						for (int i = 0; i <= local_server->datas->card_amount - 1; i++)
+						{
+							left_pokers.push_back(PokerCard(local_server->datas->out_poker[i]));
+						}
+						ArrangeOutPokers_remote_left(left_pokers);
+					}
+				}
+				isrecv_struct = false;
+				local_server->now_play++;
+				local_server->now_play = local_server->now_play > 3 ? (local_server->now_play - 3) : local_server->now_play;
+			}
 		}
 	}
 	else
 	{
 		if (local_client->play_swith)
 		{
-			local_server->play_swith = false;
+			ClearOutPokers(local->outpoker);
+			skip = SkipButton();
+			play = PlayButton();
+			local->Action(skip, play, local_client->datas, this);
+			local_client->play_swith = false;
 		}
 		else
 		{
@@ -312,14 +355,52 @@ void GameScene::LocalPlay(float t)
 				else
 				{
 					//添加这位玩家出的牌
-					vector<PokerCard> temp;
-					for (int i = 0; i <= local_client->datas->card_amount - 1; i++)
+					if (local_client->localplayer->playercode == 2)
 					{
-						temp.push_back(PokerCard(local_client->datas->out_poker[i]));
+						if (local_client->now_play == 1)
+						{
+							ClearOutPokers(left_pokers);
+							for (int i = 0; i <= local_client->datas->card_amount - 1; i++)
+							{
+								left_pokers.push_back(PokerCard(local_client->datas->out_poker[i]));
+							}
+							ArrangeOutPokers_remote_left(left_pokers);
+						}
+						else
+						{
+							ClearOutPokers(right_pokers);
+							for (int i = 0; i <= local_client->datas->card_amount - 1; i++)
+							{
+								right_pokers.push_back(PokerCard(local_client->datas->out_poker[i]));
+							}
+							ArrangeOutPokers_remote_right(right_pokers);
+						}
 					}
-					ArrangeoutPokers_remote(temp);
+					else
+					{
+						if (local_client->now_play == 2)
+						{
+							ClearOutPokers(left_pokers);
+							for (int i = 0; i <= local_client->datas->card_amount - 1; i++)
+							{
+								left_pokers.push_back(PokerCard(local_client->datas->out_poker[i]));
+							}
+							ArrangeOutPokers_remote_left(left_pokers);
+						}
+						else
+						{
+							ClearOutPokers(right_pokers);
+							for (int i = 0; i <= local_client->datas->card_amount - 1; i++)
+							{
+								right_pokers.push_back(PokerCard(local_client->datas->out_poker[i]));
+							}
+							ArrangeOutPokers_remote_right(right_pokers);
+						}
+					}
 				}
 				isrecv_struct = false;
+				local_client->now_play++;
+				local_client->now_play = local_client->now_play > 3 ? (local_client->now_play - 3) : local_client->now_play;
 			}
 		}
 	}
@@ -509,18 +590,18 @@ void GameScene::ArrangeHandPokers_afterplay(Player* x)
 		}
 	}
 }
-bool GameScene::ArrangeoutPokers(Player* x)
+bool GameScene::ArrangeOutPokers(Player* x)
 {
 	if (x->outpoker.size() == 0)
 	{
 		return false;
 	}
 	auto visibleSize = Director::getInstance()->getVisibleSize();
-	x->outpoker[x->outpoker.size() / 2].m_card_picture->setPosition(visibleSize.width / 2, 300);
+	x->outpoker[x->outpoker.size() / 2].m_card_picture->setPosition(visibleSize.width / 2, 320);
 	size_t cx = x->outpoker[x->outpoker.size() / 2].m_card_picture->getPositionX();
 	for (int i = 0; i <= x->outpoker.size() - 1; i++)
 	{
-		x->outpoker[i].m_card_picture->setPosition(cx + 30 * (i - (x->outpoker.size() / 2)), 300);
+		x->outpoker[i].m_card_picture->setPosition(cx + 30 * (i - (x->outpoker.size() / 2)), 320);
 	}
 	for (int i = 0; i <= x->outpoker.size() - 1; i++)
 	{
@@ -529,23 +610,52 @@ bool GameScene::ArrangeoutPokers(Player* x)
 	//x->outpoker.erase(x->outpoker.begin(), x->outpoker.end());//在以后需要改动
 	return true;
 }
-bool GameScene::ArrangeoutPokers_remote(vector<PokerCard> remote_outpoker)
+bool GameScene::ArrangeOutPokers_remote_left(vector<PokerCard> &remote_outpoker)
 {
 	if (remote_outpoker.size() == 0)
 	{
 		return false;
 	}
 	auto visibleSize = Director::getInstance()->getVisibleSize();
-	remote_outpoker[remote_outpoker.size() / 2].m_card_picture->setPosition(visibleSize.width / 2, 400);/////////
-	size_t cx = remote_outpoker[remote_outpoker.size() / 2].m_card_picture->getPositionX();
+	remote_outpoker[0].m_card_picture->setPosition(visibleSize.width / 2 - 480, 520);
+	size_t cx = remote_outpoker[0].m_card_picture->getPositionX();
 	for (int i = 0; i <= remote_outpoker.size() - 1; i++)
 	{
-		remote_outpoker[i].m_card_picture->setPosition(cx + 30 * (i - (remote_outpoker.size() / 2)), 400);
+		remote_outpoker[i].m_card_picture->setPosition(cx + 30 * i, 520);
 	}
 	for (int i = 0; i <= remote_outpoker.size() - 1; i++)
 	{
 		addChild(remote_outpoker[i].m_card_picture);
-		log("added");
 	}
 	return true;
+}
+bool GameScene::ArrangeOutPokers_remote_right(vector<PokerCard> &remote_outpoker)
+{
+	if (remote_outpoker.size() == 0)
+	{
+		return false;
+	}
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	remote_outpoker[remote_outpoker.size() - 1].m_card_picture->setPosition(visibleSize.width / 2 + 480, 520);
+	size_t cx = remote_outpoker[remote_outpoker.size() - 1].m_card_picture->getPositionX();
+	for (int i = 0; i <= remote_outpoker.size() - 1; i++)
+	{
+		remote_outpoker[i].m_card_picture->setPosition(cx - 30 * (remote_outpoker.size() - 1 - i), 520);
+	}
+	for (int i = 0; i <= remote_outpoker.size() - 1; i++)
+	{
+		addChild(remote_outpoker[i].m_card_picture);
+	}
+	return true;
+}
+void GameScene::ClearOutPokers(vector<PokerCard> &remote_outpoker)
+{
+	if (!remote_outpoker.empty())
+	{
+		for (int i = 0; i <= remote_outpoker.size() - 1; i++)
+		{
+			remote_outpoker[i].m_card_picture->removeFromParent();
+		}
+		remote_outpoker.erase(remote_outpoker.begin(), remote_outpoker.end());
+	}
 }
