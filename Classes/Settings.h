@@ -1,6 +1,6 @@
 #ifndef _SETTINGS_H_
 #define _SETTINGS_H_
-#include <vector>;
+#include <vector>
 using namespace std;
 
 struct play_data

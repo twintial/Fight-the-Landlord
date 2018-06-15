@@ -245,6 +245,10 @@ void Server::DealAndSnatchlandlord()
 	localplayer->hand.push_back(card[53]);
 	//localplayer的最后三张为地主牌，localplayer牌不再使用
 	islord = now_lord == localplayer->playercode ? 1 : 0;
+	if (islord)
+	{
+		localscene->lord_first_play = true;
+	}
 }
 void Server::DealAndSnatchlandlord_thread()
 {
@@ -255,10 +259,10 @@ void Server::Play()
 {
 	while (true)
 	{
-		log("isstart=%d", isstart);
 		if (isstart)
 		{
 			now_play = now_lord;
+			localscene->isadded = 0;
 			//开始游戏
 			while (true)
 			{
@@ -293,7 +297,7 @@ void Server::Play()
 					send_struct(client[3 - now_play]);
 					localscene->isrecv_struct = true;
 				}
-				boost::this_thread::sleep(boost::posix_time::millisec(1000));
+				boost::this_thread::sleep(boost::posix_time::millisec(500));
 			}
 		}
 	}

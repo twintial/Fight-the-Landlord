@@ -14,6 +14,7 @@ Button* skip;
 Button* play;
 Sprite* left_skip;
 Sprite* right_skip;
+LabelTTF* playing;
 
 Scene* GameScene::CreateScene()
 {
@@ -25,8 +26,10 @@ bool GameScene::init()
 	{
 		return false;
 	}
+	lord_first_play = false;
     isclick = false;
 	isrecv_struct = false;
+	isadded = -1;
 	if (LoginScene::state)
 	{
 		local_server = new Server(LoginScene::local, this);
@@ -294,27 +297,35 @@ void GameScene::LocalPlay(float t)
 			skip = SkipButton();
 			play = PlayButton();
 			local->Action(skip, play, local_server->datas, this);
-			if (getChildByTag(1) != NULL && getChildByTag(2) != NULL)
+			if ((getChildByTag(1) != NULL && getChildByTag(2) != NULL) || lord_first_play)
 			{
 				skip->setBright(false);
 				skip->setTouchEnabled(false);
 				//可以出任意合理牌
 				local_server->datas->card_type = 0;
+				lord_first_play = false;
 			}
 			local_server->play_swith = false;
 		}
 		else
 		{
-			////将出牌人的牌或不出删去
-
-			//if (local_server->now_play == 2)
-			//{
-			//	ClearOutPokers(right_pokers);
-			//}
-			//else
-			//{
-			//	ClearOutPokers(left_pokers);
-			//}
+			//添加waiting
+			if (isadded == 0)
+			{
+				playing = LabelTTF::create("waiting...", "arial", 30);
+				if (local_server->now_play == 2)
+				{
+					playing->setPosition(1050, 600);
+					addChild(playing);
+					isadded = 1;
+				}
+				else if (local_server->now_play == 3)
+				{
+					playing->setPosition(174, 600);
+					addChild(playing);
+					isadded = 1;
+				}
+			}
 			//接收别人的datas数据包，将其他玩家打的牌加入屏幕中
 			if (isrecv_struct)
 			{
@@ -365,6 +376,9 @@ void GameScene::LocalPlay(float t)
 				isrecv_struct = false;
 				local_server->now_play++;
 				local_server->now_play = local_server->now_play > 3 ? (local_server->now_play - 3) : local_server->now_play;
+				//移除等待出牌
+				playing->removeFromParent();
+				isadded = 0;
 			}
 		}
 	}
@@ -376,40 +390,53 @@ void GameScene::LocalPlay(float t)
 			skip = SkipButton();
 			play = PlayButton();
 			local->Action(skip, play, local_client->datas, this);
-			if (getChildByTag(1) != NULL && getChildByTag(2) != NULL)
+			if ((getChildByTag(1) != NULL && getChildByTag(2) != NULL) || lord_first_play)
 			{
 				skip->setBright(false);
 				skip->setTouchEnabled(false);
 				//可以出任意合理牌
 				local_client->datas->card_type = 0;
+				lord_first_play = false;
 			}
 			local_client->play_swith = false;
 		}
 		else
 		{
-			////将出牌人的出牌或不出删去
-			//if (local_client->localplayer->playercode == 2)
-			//{
-			//	if (local_client->now_play == 1)
-			//	{
-			//		ClearOutPokers(left_pokers);
-			//	}
-			//	else
-			//	{
-			//		ClearOutPokers(right_pokers);
-			//	}
-			//}
-			//else
-			//{
-			//	if (local_client->now_play == 2)
-			//	{
-			//		ClearOutPokers(left_pokers);
-			//	}
-			//	else
-			//	{
-			//		ClearOutPokers(right_pokers);
-			//	}
-			//}
+			//添加waiting
+			if (isadded == 0)
+			{
+				playing = LabelTTF::create("waiting...", "arial", 30);
+				if (local_client->localplayer->playercode == 2)
+				{
+					if (local_client->now_play == 1)
+					{
+						playing->setPosition(174, 600);
+						addChild(playing);
+						isadded = 1;
+					}
+					else if (local_client->now_play == 3)
+					{
+						playing->setPosition(1050, 600);
+						addChild(playing);
+						isadded = 1;
+					}
+				}
+				else
+				{
+					if (local_client->now_play == 2)
+					{
+						playing->setPosition(174, 600);
+						addChild(playing);
+						isadded = 1;
+					}
+					else if (local_client->now_play == 1)
+					{
+						playing->setPosition(1050, 600);
+						addChild(playing);
+						isadded = 1;
+					}
+				}
+			}
 			//如果接受到了数据包
 			if (isrecv_struct)
 			{
@@ -509,6 +536,9 @@ void GameScene::LocalPlay(float t)
 				isrecv_struct = false;
 				local_client->now_play++;
 				local_client->now_play = local_client->now_play > 3 ? (local_client->now_play - 3) : local_client->now_play;
+				//移除等待出牌
+				playing->removeFromParent();
+				isadded = 0;
 			}
 		}
 	}

@@ -44,5 +44,7 @@ private:
 	Player* local;//再gamescene上添加牌时使用，其手牌为整理过。
 	bool isclick;
 	bool isrecv_struct;
+	bool lord_first_play;
+	int isadded;//是否添加waiting
 };
 #endif

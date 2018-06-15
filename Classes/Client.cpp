@@ -186,6 +186,10 @@ void Client::DealAndSnatchlandlord()
 		localplayer->hand.push_back(lord_poker[2]);
 		//localplayer的最后三张为地主牌，localplayer牌不再使用
 		islord = now_lord == localplayer->playercode ? 1 : 0;
+		if (islord)
+		{
+			localscene->lord_first_play = true;
+		}
 	}
 	catch (boost::system::system_error e)
 	{
@@ -206,6 +210,7 @@ void Client::Play()
 		{
 			log("is=%d", isstart);
 			now_play = now_lord;
+			localscene->isadded = 0;
 			//开始游戏
 			while (true)
 			{
@@ -228,10 +233,39 @@ void Client::Play()
 				}
 				else
 				{
+					////添加waiting...
+					//auto playing = LabelTTF::create("waiting...", "arial", 30);
+					//if (localplayer->playercode == 2)
+					//{
+					//	if (now_play == 1)
+					//	{
+					//		playing->setPosition(174, 600);
+					//		localscene->addChild(playing);
+					//	}
+					//	else
+					//	{
+					//		playing->setPosition(1050, 600);
+					//		localscene->addChild(playing);
+					//	}
+					//}
+					//else
+					//{
+					//	if (now_play == 2)
+					//	{
+					//		playing->setPosition(174, 600);
+					//		localscene->addChild(playing);
+					//	}
+					//	else
+					//	{
+					//		playing->setPosition(1050, 600);
+					//		localscene->addChild(playing);
+					//	}
+					//}
+
 					read_struct();
 					localscene->isrecv_struct = true;
 				}
-				boost::this_thread::sleep(boost::posix_time::millisec(1000));
+				boost::this_thread::sleep(boost::posix_time::millisec(500));
 			}
 		}
 	}
