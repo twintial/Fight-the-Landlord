@@ -14,7 +14,10 @@ Button* skip;
 Button* play;
 Sprite* left_skip;
 Sprite* right_skip;
-LabelTTF* playing;
+LabelTTF* playing;//等待出牌
+vector<int> pokers_num;
+LabelTTF* left_num;//左边的牌数显示
+LabelTTF* right_num;//右边的牌数显示
 
 Scene* GameScene::CreateScene()
 {
@@ -30,6 +33,10 @@ bool GameScene::init()
     isclick = false;
 	isrecv_struct = false;
 	isadded = -1;
+	for (int i = 0; i <= 2; i++)
+	{
+		pokers_num.push_back(-1);
+	}
 	if (LoginScene::state)
 	{
 		local_server = new Server(LoginScene::local, this);
@@ -169,6 +176,32 @@ void GameScene::ArrangePoker_lord(float t)
 				int delta = local_server->now_lord == 3 ? -1 : 1;
 				lord_mark->runAction(MoveTo::create(1, Point(visibleSize.width / 2 + delta * 570, 550)));
 			}
+			//添加牌数背景
+			auto back_left = Sprite::create("back.png");
+			back_left->setPosition(80, 500);
+			addChild(back_left);
+			auto back_right = Sprite::create("back.png");
+			back_right->setPosition(1142, 500);
+			addChild(back_right);
+			//添加牌数
+			for (int i = 0; i <= 2; i++)
+			{
+				if (i == local_server->now_lord - 1)
+				{
+					pokers_num[i] = 20;
+				}
+				else
+				{
+					pokers_num[i] = 17;
+				}
+			}
+			left_num = LabelTTF::create(to_string(pokers_num[2]), "arial", 25);
+			right_num = LabelTTF::create(to_string(pokers_num[1]), "arial", 25);
+			left_num->setPosition(80, 500);
+			right_num->setPosition(1142, 500);
+			addChild(left_num);
+			addChild(right_num);
+
 			local_server->isstart = true;
 			this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));
 		}
@@ -233,6 +266,32 @@ void GameScene::ArrangePoker_lord(float t)
 					lord_mark->runAction(MoveTo::create(1, Point(visibleSize.width / 2 + delta * 570, 550)));
 				}
 			}
+			//添加牌数背景
+			auto back_left = Sprite::create("back.png");
+			back_left->setPosition(80, 500);
+			addChild(back_left);
+			auto back_right = Sprite::create("back.png");
+			back_right->setPosition(1142, 500);
+			addChild(back_right);
+			//添加牌数
+			for (int i = 0; i <= 2; i++)
+			{
+				if (i == local_client->now_lord - 1)
+				{
+					pokers_num[i] = 20;
+				}
+				else
+				{
+					pokers_num[i] = 17;
+				}
+			}
+			left_num = LabelTTF::create(to_string(pokers_num[local_client->localplayer->playercode - 2]), "arial", 25);
+			right_num = LabelTTF::create(to_string(pokers_num[local_client->localplayer->playercode == 2 ? 2 : 0]), "arial", 25);
+			left_num->setPosition(80, 500);
+			right_num->setPosition(1142, 500);
+			addChild(left_num);
+			addChild(right_num);
+
 			local_client->isstart = true;
 			this->unschedule(schedule_selector(GameScene::ArrangePoker_lord));
 		}
@@ -362,6 +421,9 @@ void GameScene::LocalPlay(float t)
 							right_pokers.push_back(PokerCard(local_server->datas->out_poker[i]));
 						}
 						ArrangeOutPokers_remote_right(right_pokers);
+						//将出牌数减去
+						pokers_num[1] -= local_server->datas->card_amount;
+						right_num->setString(to_string(pokers_num[1]));
 					}
 					else
 					{
@@ -371,6 +433,9 @@ void GameScene::LocalPlay(float t)
 							left_pokers.push_back(PokerCard(local_server->datas->out_poker[i]));
 						}
 						ArrangeOutPokers_remote_left(left_pokers);
+						//将出牌数减去
+						pokers_num[2] -= local_server->datas->card_amount;
+						left_num->setString(to_string(pokers_num[2]));
 					}
 				}
 				isrecv_struct = false;
@@ -500,6 +565,9 @@ void GameScene::LocalPlay(float t)
 								left_pokers.push_back(PokerCard(local_client->datas->out_poker[i]));
 							}
 							ArrangeOutPokers_remote_left(left_pokers);
+							//减去出牌数
+							pokers_num[0] -= local_client->datas->card_amount;
+							left_num->setString(to_string(pokers_num[0]));
 						}
 						else
 						{
@@ -509,6 +577,9 @@ void GameScene::LocalPlay(float t)
 								right_pokers.push_back(PokerCard(local_client->datas->out_poker[i]));
 							}
 							ArrangeOutPokers_remote_right(right_pokers);
+							//减去出牌数
+							pokers_num[2] -= local_client->datas->card_amount;
+							right_num->setString(to_string(pokers_num[2]));
 						}
 					}
 					else
@@ -521,6 +592,9 @@ void GameScene::LocalPlay(float t)
 								left_pokers.push_back(PokerCard(local_client->datas->out_poker[i]));
 							}
 							ArrangeOutPokers_remote_left(left_pokers);
+							//减去出牌数
+							pokers_num[1] -= local_client->datas->card_amount;
+							left_num->setString(to_string(pokers_num[1]));
 						}
 						else
 						{
@@ -530,6 +604,9 @@ void GameScene::LocalPlay(float t)
 								right_pokers.push_back(PokerCard(local_client->datas->out_poker[i]));
 							}
 							ArrangeOutPokers_remote_right(right_pokers);
+							//减去出牌数
+							pokers_num[0] -= local_client->datas->card_amount;
+							right_num->setString(to_string(pokers_num[0]));
 						}
 					}
 				}
