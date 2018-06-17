@@ -276,15 +276,12 @@ void Server::Play()
 						//若点击给两个客户端发送数据包
 						if (localscene->isclick)
 						{
+							if (datas->isplay_pokers)
+							{
+								localscene->pokers_num[0] -= datas->card_amount;//减去自己的出牌
+							}
 							send_struct(client[0]);
 							send_struct(client[1]);
-							log("ca=%d", datas->card_amount);
-							log("card_type=%d", datas->card_type);
-							log("%d", datas->isplay_pokers);
-							for (int i = 0; i <= datas->card_amount - 1; i++)
-							{
-								log("%d=%d", i, datas->out_poker[i]);
-							}
 							localscene->isclick = false;
 							now_play++;
 							now_play = now_play > 3 ? (now_play - 3) : now_play;

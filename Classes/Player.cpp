@@ -17,6 +17,7 @@ Player& Player::operator=(Player& x)
 }
 void Player::Action(Button* skipbutton, Button* playbutton, play_data* datas, GameScene* scene)
 {
+	//消除自己的不出图片
 	if (scene->getChildByTag(3) != NULL)
 	{
 		local_skip->removeFromParent();

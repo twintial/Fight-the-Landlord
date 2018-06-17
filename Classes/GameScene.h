@@ -41,6 +41,7 @@ public:
 	CREATE_FUNC(GameScene);
 private:
 	static vector<int> card;
+	vector<int> pokers_num;
 	Player* local;//再gamescene上添加牌时使用，其手牌为整理过。
 	bool isclick;
 	bool isrecv_struct;

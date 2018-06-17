@@ -15,7 +15,6 @@ Button* play;
 Sprite* left_skip;
 Sprite* right_skip;
 LabelTTF* playing;//等待出牌
-vector<int> pokers_num;
 LabelTTF* left_num;//左边的牌数显示
 LabelTTF* right_num;//右边的牌数显示
 
@@ -114,6 +113,55 @@ void GameScene::ArrangePoker_before(float t)
 			Operation::CardSort(*local);
 			ArrangePokers(local->handpoker);
 			this->unschedule(schedule_selector(GameScene::ArrangePoker_before));
+		}
+	}
+}
+void GameScene::ArrangeLordbutton(float t)
+{
+	if (LoginScene::state)
+	{
+		if (local_server->localplayer->playercode == local_server->now_choose[0])
+		{
+			a = PointButton_0();
+			b = PointButton_1();
+			c = PointButton_2();
+			d = PointButton_3();
+			if (local_server->max_point == 1)
+			{
+				b->setBright(false);
+				b->setTouchEnabled(false);
+			}
+			else if (local_server->max_point == 2)
+			{
+				b->setBright(false);
+				b->setTouchEnabled(false);
+				c->setBright(false);
+				c->setTouchEnabled(false);
+			}
+			this->unschedule(schedule_selector(GameScene::ArrangeLordbutton));
+		}
+	}
+	else
+	{
+		if (local_client->localplayer->playercode == local_client->now_choose[0])
+		{
+			a = PointButton_0();
+			b = PointButton_1();
+			c = PointButton_2();
+			d = PointButton_3();
+			if (local_client->max_point == 1)
+			{
+				b->setBright(false);
+				b->setTouchEnabled(false);
+			}
+			else if (local_client->max_point == 2)
+			{
+				b->setBright(false);
+				b->setTouchEnabled(false);
+				c->setBright(false);
+				c->setTouchEnabled(false);
+			}
+			this->unschedule(schedule_selector(GameScene::ArrangeLordbutton));
 		}
 	}
 }
@@ -297,57 +345,9 @@ void GameScene::ArrangePoker_lord(float t)
 		}
 	}
 }
-void GameScene::ArrangeLordbutton(float t)
-{
-	if (LoginScene::state)
-	{
-		if (local_server->localplayer->playercode == local_server->now_choose[0])
-		{
-			a = PointButton_0();
-			b = PointButton_1();
-			c = PointButton_2();
-			d = PointButton_3();
-			if (local_server->max_point == 1)
-			{
-				b->setBright(false);
-				b->setTouchEnabled(false);
-			}
-			else if (local_server->max_point == 2)
-			{
-				b->setBright(false);
-				b->setTouchEnabled(false);
-				c->setBright(false);
-				c->setTouchEnabled(false);
-			}
-			this->unschedule(schedule_selector(GameScene::ArrangeLordbutton));
-		}
-	}
-	else
-	{
-		if (local_client->localplayer->playercode == local_client->now_choose[0])
-		{
-			a = PointButton_0();
-			b = PointButton_1();
-			c = PointButton_2();
-			d = PointButton_3();
-			if (local_client->max_point == 1)
-			{
-				b->setBright(false);
-				b->setTouchEnabled(false);
-			}
-			else if (local_client->max_point == 2)
-			{
-				b->setBright(false);
-				b->setTouchEnabled(false);
-				c->setBright(false);
-				c->setTouchEnabled(false);
-			}
-			this->unschedule(schedule_selector(GameScene::ArrangeLordbutton));
-		}
-	}
-}
 void GameScene::LocalPlay(float t)
 {
+	auto visibleSize = Director::getInstance()->getVisibleSize();
 	if (LoginScene::state)
 	{
 		if (local_server->play_swith)
@@ -444,6 +444,45 @@ void GameScene::LocalPlay(float t)
 				//移除等待出牌
 				playing->removeFromParent();
 				isadded = 0;
+			}
+		}
+		//判断是否有人出完
+		for (int i = 0; i <= 2; i++)
+		{
+			if (pokers_num[i] == 0)
+			{
+				if (i == local_server->now_lord - 1)
+				{
+					//地主赢，判断自己是地主还是农民
+					if (local_server->islord)
+					{
+						auto win_logo = Sprite::create("win.png");
+						win_logo->setPosition(visibleSize / 2);
+						addChild(win_logo);
+					}
+					else
+					{
+						auto lose_logo = Sprite::create("lose.png");
+						lose_logo->setPosition(visibleSize / 2);
+						addChild(lose_logo);
+					}
+				}
+				else
+				{
+					if (local_server->islord)
+					{
+						auto lose_logo = Sprite::create("lose.png");
+						lose_logo->setPosition(visibleSize / 2);
+						addChild(lose_logo);
+					}
+					else
+					{
+						auto win_logo = Sprite::create("win.png");
+						win_logo->setPosition(visibleSize / 2);
+						addChild(win_logo);
+					}
+				}
+				this->unschedule(schedule_selector(GameScene::LocalPlay));
 			}
 		}
 	}
@@ -616,6 +655,45 @@ void GameScene::LocalPlay(float t)
 				//移除等待出牌
 				playing->removeFromParent();
 				isadded = 0;
+			}
+		}
+		//判断是否有人出完
+		for (int i = 0; i <= 2; i++)
+		{
+			if (pokers_num[i] == 0)
+			{
+				if (i == local_client->now_lord - 1)
+				{
+					//地主赢，判断自己是地主还是农民
+					if (local_client->islord)
+					{
+						auto win_logo = Sprite::create("win.png");
+						win_logo->setPosition(visibleSize / 2);
+						addChild(win_logo);
+					}
+					else
+					{
+						auto lose_logo = Sprite::create("lose.png");
+						lose_logo->setPosition(visibleSize / 2);
+						addChild(lose_logo);
+					}
+				}
+				else
+				{
+					if (local_client->islord)
+					{
+						auto lose_logo = Sprite::create("lose.png");
+						lose_logo->setPosition(visibleSize / 2);
+						addChild(lose_logo);
+					}
+					else
+					{
+						auto win_logo = Sprite::create("win.png");
+						win_logo->setPosition(visibleSize / 2);
+						addChild(win_logo);
+					}
+				}
+				this->unschedule(schedule_selector(GameScene::LocalPlay));
 			}
 		}
 	}

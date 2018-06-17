@@ -222,6 +222,10 @@ void Client::Play()
 					{
 						if (localscene->isclick)
 						{
+							if (datas->isplay_pokers)
+							{
+								localscene->pokers_num[localplayer->playercode - 1] -= datas->card_amount;//减去自己的出牌
+							}
 							//发送数据给服务器
 							send_struct();
 							localscene->isclick = false;
@@ -233,35 +237,6 @@ void Client::Play()
 				}
 				else
 				{
-					////添加waiting...
-					//auto playing = LabelTTF::create("waiting...", "arial", 30);
-					//if (localplayer->playercode == 2)
-					//{
-					//	if (now_play == 1)
-					//	{
-					//		playing->setPosition(174, 600);
-					//		localscene->addChild(playing);
-					//	}
-					//	else
-					//	{
-					//		playing->setPosition(1050, 600);
-					//		localscene->addChild(playing);
-					//	}
-					//}
-					//else
-					//{
-					//	if (now_play == 2)
-					//	{
-					//		playing->setPosition(174, 600);
-					//		localscene->addChild(playing);
-					//	}
-					//	else
-					//	{
-					//		playing->setPosition(1050, 600);
-					//		localscene->addChild(playing);
-					//	}
-					//}
-
 					read_struct();
 					localscene->isrecv_struct = true;
 				}
