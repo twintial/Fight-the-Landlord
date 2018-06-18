@@ -1,5 +1,6 @@
 #include<LoginScene.h>
 USING_NS_CC;
+using namespace CocosDenshion;
 size_t LoginScene::state;
 Player* LoginScene::local;
 Scene* LoginScene::CreateHost()
@@ -20,7 +21,7 @@ bool LoginScene::init()
 	{
 		return false;
 	}
-
+	SettingBackground();
 	InputUsername();
 	if (!state)
 	{
@@ -31,7 +32,8 @@ bool LoginScene::init()
 		GetLocalIP();//作为host连接本地IP
 	}
 	OKbutton();
-	schedule(schedule_selector(LoginScene::timehandle),2);
+	ReturnButton();
+	schedule(schedule_selector(LoginScene::timehandle),2);//输出IP
 	return true;
 }
 void LoginScene::timehandle(float t)
@@ -43,18 +45,18 @@ void LoginScene::InputUsername()
 	//添加文本框背景
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto background = Sprite::create("username.png");
-	background->setPosition(visibleSize / 2);
+	background->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 100));
 	addChild(background);
 
 	auto text = Text::create("", "arial", 25);
-	text->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 50));
+	text->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 40));
 	addChild(text);
 
 	auto tf = TextField::create("Enter your name", "arial", 30);
 	tf->setTextColor(Color4B(0,102, 205, 170));
 	tf->setMaxLength(10);
 	tf->setMaxLengthEnabled(true);
-	tf->setPosition(visibleSize / 2);
+	tf->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 100));
 	addChild(tf);
 
 	tf->addEventListener([=](Ref *pSender, TextField::EventType type)
@@ -91,18 +93,18 @@ void LoginScene::InputConnectIP()
 	//添加文本框背景
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto background = Sprite::create("IP.png");
-	background->setPosition(visibleSize.width / 2 + 300, visibleSize.height / 2);
+	background->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 10));
 	addChild(background);
 
 	auto text = Text::create("", "arial", 25);
-	text->setPosition(Vec2(visibleSize.width / 2 + 300, visibleSize.height / 2 - 50));
+	text->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 50));
 	addChild(text);
 
-	auto tf = TextField::create("Enter join IP", "arial", 20);
-	tf->setTextColor(Color4B(0, 102, 205, 170));
+	auto tf = TextField::create("          ", "arial", 20);
+	tf->setTextColor(Color4B::BLACK);
 	tf->setMaxLength(15);
 	tf->setMaxLengthEnabled(true);
-	tf->setPosition(Vec2(visibleSize.width / 2 + 310, visibleSize.height / 2));
+	tf->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 10));
 	addChild(tf);
 
 	tf->addEventListener([=](Ref *pSender, TextField::EventType type)
@@ -137,8 +139,13 @@ void LoginScene::EnterGameScene(Ref *pSender)
 {
 	if (local->IP != ""&&local->username != "")
 	{
+	/*	SimpleAudioEngine::getInstance()->stopBackgroundMusic();*/
 		Director::getInstance()->pushScene(GameScene::CreateScene());
 	}
+}
+void LoginScene::ReturnChooseScene(Ref *pSender)
+{
+	Director::getInstance()->popScene();
 }
 void LoginScene::OKbutton()
 {
@@ -146,8 +153,17 @@ void LoginScene::OKbutton()
 	auto button = Sprite::create("OKbutton.png");
 	auto menuitem = MenuItemSprite::create(button, button, CC_CALLBACK_1(LoginScene::EnterGameScene, this));
 	auto menu = Menu::create(menuitem, NULL);
-	menu->setPosition(visibleSize.width / 2, visibleSize.height / 2 - 300);
+	menu->setPosition(visibleSize.width / 2, visibleSize.height / 2 - 170);
 	addChild(menu);
+}
+void LoginScene::ReturnButton()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto button = Sprite::create("return.png");
+	auto returnItem = MenuItemSprite::create(button, button, CC_CALLBACK_1(LoginScene::ReturnChooseScene, this));
+	auto menu = Menu::create(returnItem, NULL);
+	menu->setPosition(visibleSize.width - returnItem->getContentSize().width / 2, visibleSize.height - returnItem->getContentSize().height / 2);
+	this->addChild(menu);
 }
 int LoginScene::GetLocalIP()
 {
@@ -172,3 +188,11 @@ int LoginScene::GetLocalIP()
 	local->IP = inet_ntoa(addr);
 	return 1;
 }//（若创建房间则连接本地IP）获取本地IP
+void LoginScene::SettingBackground()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto background = Sprite::create("Lbackground.jpg");
+	//background->setScale(1.2f);
+	background->setPosition(visibleSize / 2);
+	this->addChild(background);
+}

@@ -10,18 +10,23 @@ bool ChooseScene::init()
 	{
 		return false;
 	}
-
+	SettingBackground();
 	CreateButton();
 	JoinButton();
+	ReturnButton();
 	return true;
 }
 void ChooseScene::StartWithServer(Ref *pSender)
 {
-	Director::getInstance()->replaceScene(LoginScene::CreateHost());
+	Director::getInstance()->pushScene(LoginScene::CreateHost());
 }
 void ChooseScene::StartWithClient(Ref *pSender)
 {
-	Director::getInstance()->replaceScene(LoginScene::CreateGuest());
+	Director::getInstance()->pushScene(LoginScene::CreateGuest());
+}
+void ChooseScene::ReturnStartScene(Ref *pSender)
+{
+	Director::getInstance()->popScene();
 }
 void ChooseScene::CreateButton()
 {
@@ -29,7 +34,7 @@ void ChooseScene::CreateButton()
 	auto button = Sprite::create("create.png");
 	auto menuitem = MenuItemSprite::create(button, button, CC_CALLBACK_1(ChooseScene::StartWithServer, this));
 	auto menu = Menu::create(menuitem, NULL);
-	menu->setPosition(visibleSize.width/2+400,visibleSize.height/2);
+	menu->setPosition(visibleSize.width / 2, visibleSize.height / 2 + 100);
 	this->addChild(menu);
 }
 void ChooseScene::JoinButton()
@@ -38,6 +43,23 @@ void ChooseScene::JoinButton()
 	auto button = Sprite::create("join.png");
 	auto menuitem = MenuItemSprite::create(button, button, CC_CALLBACK_1(ChooseScene::StartWithClient, this));
 	auto menu = Menu::create(menuitem, NULL);
-	menu->setPosition(visibleSize / 2);
+	menu->setPosition(visibleSize.width / 2, visibleSize.height / 2 - 100);
 	this->addChild(menu);
+}
+void ChooseScene::ReturnButton()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto button = Sprite::create("return.png");
+	auto returnItem = MenuItemSprite::create(button, button, CC_CALLBACK_1(ChooseScene::ReturnStartScene, this));
+	auto menu = Menu::create(returnItem, NULL);
+	menu->setPosition(visibleSize.width - returnItem->getContentSize().width / 2, visibleSize.height - returnItem->getContentSize().height / 2);
+	this->addChild(menu);
+}
+void ChooseScene::SettingBackground()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto background = Sprite::create("Cbackground.jpg");
+	background->setScale(1.2f);
+	background->setPosition(visibleSize / 2);
+	this->addChild(background);
 }

@@ -6,6 +6,7 @@
 #include<GameScene.h>
 #include<Player.h>
 #include<string>
+#include"SimpleAudioEngine.h"
 using namespace std;
 using namespace ui;
 class LoginScene :public cocos2d::Scene
@@ -19,7 +20,10 @@ public:
 	void InputUsername();
 	void InputConnectIP();
 	void EnterGameScene(Ref *pSender);
+	void ReturnChooseScene(Ref *pSender);
 	void OKbutton();
+	void ReturnButton();
+	void SettingBackground();
 	int GetLocalIP();
 	CREATE_FUNC(LoginScene);
 	void timehandle(float t);//

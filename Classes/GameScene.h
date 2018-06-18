@@ -9,8 +9,11 @@
 #include"LoginScene.h"
 #include"Client.h"
 #include"Server.h"
+#include"PokerCard.h"
+#include"SimpleAudioEngine.h"
 using namespace std;
 using namespace ui;
+using namespace CocosDenshion;
 class GameScene:public cocos2d::Scene
 {
 public:
@@ -19,6 +22,7 @@ public:
 	friend class Player;
 	static cocos2d::Scene* CreateScene();
 	virtual bool init();
+
 	Button* SkipButton();
 	Button* PlayButton();
 	void ReadyButton();

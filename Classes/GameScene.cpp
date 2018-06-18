@@ -1,5 +1,4 @@
 #include"GameScene.h"
-#include"PokerCard.h"
 USING_NS_CC;
 Client * local_client;
 Server * local_server;
@@ -28,6 +27,7 @@ bool GameScene::init()
 	{
 		return false;
 	}
+	//SimpleAudioEngine::getInstance()->playBackgroundMusic("game_bgm.mp3", true);
 	lord_first_play = false;
     isclick = false;
 	isrecv_struct = false;

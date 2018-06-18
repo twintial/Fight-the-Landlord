@@ -10,16 +10,30 @@ bool StartScene::init()
 	{
 		return false;
 	}
-
-	SettingBackgroud();
+	SimpleAudioEngine::getInstance()->playBackgroundMusic("start_bgm.mp3", true);
+	SettingBackground();
 	StartButton();
+	SettingButton();
+	CloseButton();
 	return true;
 }
 void StartScene::EnterChooseScene(Ref *pSender)
 {
-	Director::getInstance()->replaceScene(ChooseScene::CreateScene());
+	Director::getInstance()->pushScene(ChooseScene::CreateScene());
 }
-void StartScene::SettingBackgroud()
+void StartScene::EnterSettingScene(Ref *pSender)
+{
+	Director::getInstance()->pushScene(SettingScene::CreateScene());
+}
+void StartScene::menuCloseCallback(Ref *pSender)
+{
+	Director::getInstance()->end();
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	exit(0);
+#endif
+}
+void StartScene::SettingBackground()
 {
 	Sprite::create("fangkuai_1.png");Sprite::create("fangkuai_2.png");Sprite::create("fangkuai_3.png");Sprite::create("fangkuai_4.png");Sprite::create("fangkuai_5.png");Sprite::create("fangkuai_6.png");
 	Sprite::create("fangkuai_7.png");Sprite::create("fangkuai_8.png");Sprite::create("fangkuai_9.png");Sprite::create("fangkuai_10.png");Sprite::create("fangkuai_J.png");Sprite::create("fangkuai_Q.png");Sprite::create("fangkuai_K.png");
@@ -66,5 +80,23 @@ void StartScene::StartButton()
 	auto menuitem = MenuItemSprite::create(button, button, CC_CALLBACK_1(StartScene::EnterChooseScene, this));
 	auto menu = Menu::create(menuitem, NULL);
 	menu->setPosition(visibleSize / 2);
+	this->addChild(menu);
+}
+void StartScene::SettingButton()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto button = Sprite::create("settings1.png");
+	auto menuitem = MenuItemSprite::create(button, button, CC_CALLBACK_1(StartScene::EnterSettingScene, this));
+	auto menu = Menu::create(menuitem, NULL);
+	menu->setPosition(menuitem->getContentSize().width / 2 + 30, visibleSize.height - menuitem->getContentSize().height / 2 - 30);
+	this->addChild(menu);
+}
+void StartScene::CloseButton()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto button = Sprite::create("close.png");
+	auto closeItem = MenuItemSprite::create(button, button, CC_CALLBACK_1(StartScene::menuCloseCallback, this));
+	auto menu = Menu::create(closeItem, NULL);
+	menu->setPosition(visibleSize.width - closeItem->getContentSize().width / 2, visibleSize.height - closeItem->getContentSize().height / 2);
 	this->addChild(menu);
 }

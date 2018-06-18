@@ -10,8 +10,11 @@ public:
 	virtual bool init();
 	void StartWithServer(Ref *pSender);
 	void StartWithClient(Ref *pSender);
+	void ReturnStartScene(Ref *pSender);
 	void CreateButton();
 	void JoinButton();
+	void ReturnButton();
+	void SettingBackground();
 	CREATE_FUNC(ChooseScene);
 private:
 
