@@ -1,6 +1,5 @@
 #include<LoginScene.h>
 USING_NS_CC;
-using namespace CocosDenshion;
 size_t LoginScene::state;
 Player* LoginScene::local;
 Scene* LoginScene::CreateHost()
@@ -33,6 +32,7 @@ bool LoginScene::init()
 	}
 	OKbutton();
 	ReturnButton();
+	SettingButton();
 	schedule(schedule_selector(LoginScene::timehandle),2);//Êä³öIP
 	return true;
 }
@@ -147,6 +147,10 @@ void LoginScene::ReturnChooseScene(Ref *pSender)
 {
 	Director::getInstance()->popScene();
 }
+void LoginScene::EnterSettingScene(Ref *pSender)
+{
+	Director::getInstance()->pushScene(SettingScene::CreateScene());
+}
 void LoginScene::OKbutton()
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
@@ -163,6 +167,15 @@ void LoginScene::ReturnButton()
 	auto returnItem = MenuItemSprite::create(button, button, CC_CALLBACK_1(LoginScene::ReturnChooseScene, this));
 	auto menu = Menu::create(returnItem, NULL);
 	menu->setPosition(visibleSize.width - returnItem->getContentSize().width / 2, visibleSize.height - returnItem->getContentSize().height / 2);
+	this->addChild(menu);
+}
+void LoginScene::SettingButton()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto button = Sprite::create("settings1.png");
+	auto menuitem = MenuItemSprite::create(button, button, CC_CALLBACK_1(LoginScene::EnterSettingScene, this));
+	auto menu = Menu::create(menuitem, NULL);
+	menu->setPosition(menuitem->getContentSize().width / 2 + 30, visibleSize.height - menuitem->getContentSize().height / 2 - 30);
 	this->addChild(menu);
 }
 int LoginScene::GetLocalIP()

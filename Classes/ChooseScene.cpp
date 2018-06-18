@@ -1,4 +1,4 @@
-#include<ChooseScene.h>
+#include "ChooseScene.h"
 USING_NS_CC;
 Scene* ChooseScene::CreateScene()
 {
@@ -14,6 +14,7 @@ bool ChooseScene::init()
 	CreateButton();
 	JoinButton();
 	ReturnButton();
+	SettingButton();
 	return true;
 }
 void ChooseScene::StartWithServer(Ref *pSender)
@@ -27,6 +28,10 @@ void ChooseScene::StartWithClient(Ref *pSender)
 void ChooseScene::ReturnStartScene(Ref *pSender)
 {
 	Director::getInstance()->popScene();
+}
+void ChooseScene::EnterSettingScene(Ref *pSender)
+{
+	Director::getInstance()->pushScene(SettingScene::CreateScene());
 }
 void ChooseScene::CreateButton()
 {
@@ -53,6 +58,15 @@ void ChooseScene::ReturnButton()
 	auto returnItem = MenuItemSprite::create(button, button, CC_CALLBACK_1(ChooseScene::ReturnStartScene, this));
 	auto menu = Menu::create(returnItem, NULL);
 	menu->setPosition(visibleSize.width - returnItem->getContentSize().width / 2, visibleSize.height - returnItem->getContentSize().height / 2);
+	this->addChild(menu);
+}
+void ChooseScene::SettingButton()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto button = Sprite::create("settings1.png");
+	auto menuitem = MenuItemSprite::create(button, button, CC_CALLBACK_1(ChooseScene::EnterSettingScene, this));
+	auto menu = Menu::create(menuitem, NULL);
+	menu->setPosition(menuitem->getContentSize().width / 2 + 30, visibleSize.height - menuitem->getContentSize().height / 2 - 30);
 	this->addChild(menu);
 }
 void ChooseScene::SettingBackground()

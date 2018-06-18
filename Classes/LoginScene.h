@@ -3,10 +3,10 @@
 
 #include<cocos2d.h>
 #include "ui/CocosGUI.h"
-#include<GameScene.h>
-#include<Player.h>
+#include"GameScene.h"
+#include"Player.h"
+#include "SettingScene.h"
 #include<string>
-#include"SimpleAudioEngine.h"
 using namespace std;
 using namespace ui;
 class LoginScene :public cocos2d::Scene
@@ -21,8 +21,10 @@ public:
 	void InputConnectIP();
 	void EnterGameScene(Ref *pSender);
 	void ReturnChooseScene(Ref *pSender);
+	void EnterSettingScene(Ref *pSender);
 	void OKbutton();
 	void ReturnButton();
+	void SettingButton();
 	void SettingBackground();
 	int GetLocalIP();
 	CREATE_FUNC(LoginScene);
