@@ -11,7 +11,6 @@ using namespace std;
 class Operation
 {
 public:
-	void LordPoint(Player);
 	static void CardShuffle(vector<int>&card);
 	static void CardDeal(Player& a, Player& b, Player& c, vector<int>&card);
 	static void CardSort(Player&);

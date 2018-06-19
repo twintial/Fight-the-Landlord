@@ -15,15 +15,7 @@ using namespace boost::asio;
 using namespace std;
 using ip::tcp;
 typedef boost::shared_ptr<ip::tcp::socket> socket_ptr;
-//struct player_data_before_start_server
-//{
-//	int player_num;
-//	int isgamestart;
-//	char a_username[10];
-//	char b_username[10];
-//	char c_username[10];
-//
-//};
+
 class Server
 {
 public:
@@ -41,12 +33,6 @@ public:
 	void Play();
 	void Play_thread();
 
-	//void HandleRequest(socket_ptr sock);
-	//void AnalyzeRequest(socket_ptr sock, string msg);
-
-	//void CreateLoop();
-	//void Loop_thread();
-
 	void AddLocalName();
 	void AddRemoteName();
 
@@ -60,8 +46,6 @@ private:
 	bool isallready;
 	bool isstart;
 	bool play_swith;
-	//bool isclick;//是否点击
-	//bool isrecv_struct;//是否收到数据包
 
 	int already_read;
 	int max_point;//目前的最高地主分
@@ -72,6 +56,6 @@ private:
 	char now_choose[1];
 	play_data* datas;
 	Player* localplayer;
-	GameScene* localscene;//无法利用localscene添加牌，原因不明
+	GameScene* localscene;//无法利用localscene添加牌
 };
 #endif

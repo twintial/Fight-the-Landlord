@@ -28,6 +28,4 @@ enum CardType
 	QUADPLEX_TWO_SINGLE,//四带一*2
 	QUADPLEX_TWO_PAIR,//四带二*2
 };
-//bool isclick = false;
-//bool isrecv_struct = false;
 #endif // _SETTINGS_H_

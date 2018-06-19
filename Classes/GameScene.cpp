@@ -11,6 +11,7 @@ Button* c;
 Button* d;
 Button* skip;
 Button* play;
+Button* restart;
 Sprite* left_skip;
 Sprite* right_skip;
 LabelTTF* playing;//等待出牌
@@ -46,6 +47,7 @@ bool GameScene::init()
 	local = new Player();
 	Settingbackgroud();
 	ReadyButton();
+	SettingButton();
 
 	schedule(schedule_selector(GameScene::ArrangePoker_before),0.1);
 	schedule(schedule_selector(GameScene::ArrangePoker_lord), 0.1);
@@ -739,6 +741,20 @@ void GameScene::ReadyButton()
 	});
 	addChild(ready_button);
 }//在此scene中实现功能
+
+void GameScene::SettingButton()
+{
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto button = Sprite::create("settings2.png");
+	auto menuitem = MenuItemSprite::create(button, button, CC_CALLBACK_1(GameScene::EnterSettingScene, this));
+	auto menu = Menu::create(menuitem, NULL);
+	menu->setPosition(menuitem->getContentSize().width / 2 + 30, visibleSize.height - menuitem->getContentSize().height / 2 - 30);
+	this->addChild(menu);
+}
+void GameScene::EnterSettingScene(Ref *pSender)
+{
+	Director::getInstance()->pushScene(SettingScene::CreateScene());
+}
 
 Button* GameScene::PointButton_0()
 {

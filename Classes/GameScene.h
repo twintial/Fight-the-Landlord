@@ -32,6 +32,8 @@ public:
 	void ArrangePoker_before(float t);
 	void ArrangePoker_lord(float t);
 	void ArrangeLordbutton(float t);
+	void SettingButton();
+	void EnterSettingScene(Ref *pSender);
 	void LocalPlay(float t);
 	bool ArrangeOutPokers(Player*);
 	bool ArrangeOutPokers_remote_left(vector<PokerCard>&);

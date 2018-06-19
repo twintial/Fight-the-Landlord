@@ -9,15 +9,7 @@
 using namespace boost::asio;
 using namespace std;
 using ip::tcp;
-//struct player_data_before_start_client
-//{
-//	int player_num;
-//	int isgamestart;
-//	char a_username[10];
-//	char b_username[10];
-//	char c_username[10];
-//
-//};
+
 class Client
 {
 public:
@@ -34,12 +26,6 @@ public:
 
 	void Play();
 	void Play_thread();
-
-	//void Ask_to_server();
-	//void HandleAnswer_unstart();
-
-	//void CreateLoop();
-	//void Loop_thread();
 
 	void AddLocalName();
 	void AddLeftName(string leftname);
@@ -61,8 +47,6 @@ private:
 	bool ishandreceive;
 	bool isstart;
 	bool play_swith;
-	//bool isclick;//是否点击
-	//bool isrecv_struct;//是否收到数据包
 
 	char now_choose[1];
 	play_data* datas;
