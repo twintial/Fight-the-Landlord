@@ -390,14 +390,6 @@ void Client::read_struct()
 	sock.read_some(buffer(rec_buff));
 	memset(datas, 0, sizeof(*datas));
 	memcpy(datas, rec_buff, sizeof(*datas));
-
-	log("ca=%d", datas->card_amount);
-	log("card_type=%d", datas->card_type);
-	log("%d", datas->isplay_pokers);
-	for (int i = 0; i <= datas->card_amount - 1; i++)
-	{
-		log("%d=%d", i, datas->out_poker[i]);
-	}
 }
 void Client::send_struct()
 {

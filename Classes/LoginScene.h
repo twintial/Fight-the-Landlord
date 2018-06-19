@@ -31,6 +31,8 @@ public:
 	void timehandle(float t);//
 private:
 	static size_t state;
+	TextField* name_tf;
+	TextField* IP_tf;
 };
 
 #endif

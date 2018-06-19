@@ -51,8 +51,8 @@ void SettingScene::BGMVolume()
 		if (type == Slider::EventType::ON_PERCENTAGE_CHANGED)
 		{
 			//获取滑条百分比
-			int percent = music_slider->getPercent();
-			SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(float(percent) / 100);
+			float percent = music_slider->getPercent();
+			SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(percent / 100);
 			//储存设置的音量
 			UserDefault::getInstance()->setFloatForKey("music_percent", percent);
 		}

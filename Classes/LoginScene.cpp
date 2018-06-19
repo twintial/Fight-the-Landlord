@@ -52,14 +52,14 @@ void LoginScene::InputUsername()
 	text->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 40));
 	addChild(text);
 
-	auto tf = TextField::create("Enter your name", "arial", 30);
-	tf->setTextColor(Color4B(0,102, 205, 170));
-	tf->setMaxLength(10);
-	tf->setMaxLengthEnabled(true);
-	tf->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 100));
-	addChild(tf);
+	name_tf = TextField::create("Enter your name", "arial", 30);
+	name_tf->setTextColor(Color4B(0,102, 205, 170));
+	name_tf->setMaxLength(10);
+	name_tf->setMaxLengthEnabled(true);
+	name_tf->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 100));
+	addChild(name_tf);
 
-	tf->addEventListener([=](Ref *pSender, TextField::EventType type)
+	name_tf->addEventListener([=](Ref *pSender, TextField::EventType type)
 	{
 		int f = 0;
 		switch (type)
@@ -71,7 +71,7 @@ void LoginScene::InputUsername()
 		}
 		case cocos2d::ui::TextField::EventType::DETACH_WITH_IME:
 		{
-			local->username = tf->getString();
+			local->username = name_tf->getString();
 			if (local->username.length() == 0)
 			{
 				text->setString("Please enter your name");
@@ -100,14 +100,14 @@ void LoginScene::InputConnectIP()
 	text->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 50));
 	addChild(text);
 
-	auto tf = TextField::create("          ", "arial", 20);
-	tf->setTextColor(Color4B::BLACK);
-	tf->setMaxLength(15);
-	tf->setMaxLengthEnabled(true);
-	tf->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 10));
-	addChild(tf);
+	IP_tf = TextField::create("          ", "arial", 20);
+	IP_tf->setTextColor(Color4B::BLACK);
+	IP_tf->setMaxLength(15);
+	IP_tf->setMaxLengthEnabled(true);
+	IP_tf->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 10));
+	addChild(IP_tf);
 
-	tf->addEventListener([=](Ref *pSender, TextField::EventType type)
+	IP_tf->addEventListener([=](Ref *pSender, TextField::EventType type)
 	{
 		switch (type)
 		{
@@ -118,7 +118,7 @@ void LoginScene::InputConnectIP()
 		}
 		case cocos2d::ui::TextField::EventType::DETACH_WITH_IME:
 		{
-			local->IP = tf->getString();
+			local->IP = IP_tf->getString();
 			if (local->IP.length() == 0)
 			{
 				text->setString("Please enter correct IP");
@@ -137,6 +137,11 @@ void LoginScene::InputConnectIP()
 }
 void LoginScene::EnterGameScene(Ref *pSender)
 {
+	local->username = name_tf->getString();
+	if (!state)
+	{
+		local->IP = IP_tf->getString();
+	}
 	if (local->IP != ""&&local->username != "")
 	{
 	/*	SimpleAudioEngine::getInstance()->stopBackgroundMusic();*/
