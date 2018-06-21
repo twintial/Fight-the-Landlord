@@ -42,6 +42,11 @@ Server::Server(Player* local, GameScene* scene)
 	datas->isplay_pokers = true;
 
 }
+Server::~Server()
+{
+	delete localplayer;
+	delete datas;
+}
 
 void Server::CreateAccept()
 {
@@ -125,7 +130,6 @@ void Server::ReadyMsg()
 				catch (boost::system::system_error e)
 				{
 					MessageBox("read", "wrong");
-					log("%d", e.code());
 				}
 				if (readymsg[0])
 				{
@@ -141,7 +145,14 @@ void Server::ReadyMsg()
 				//发送
 				char isready[1];
 				isready[0] = isallready ? 1 : 0;
-				client[i]->write_some(buffer(isready));
+				try
+				{
+					client[i]->write_some(buffer(isready));
+				}
+				catch (boost::system::system_error e)
+				{
+					MessageBox("write", "wrong");
+				}
 				if (isallready)
 				{
 					hastold[i] = 1;
@@ -168,69 +179,76 @@ void Server::DealAndSnatchlandlord()
 	auto c = new Player();
 	//发牌
 	Operation::CardDeal(*localplayer, *b, *c, card);
-	while (true)
+	try
 	{
-		if (hastold[0] == 1 && hastold[1] == 1)
+		while (true)
 		{
-			if (!ishandsend)
+			if (hastold[0] == 1 && hastold[1] == 1)
 			{
-				client[0]->write_some(buffer(b->hand));
-				client[1]->write_some(buffer(c->hand));
-				ishandsend = true;
-			}
-			boost::this_thread::sleep(boost::posix_time::millisec(100));
-			//选地主
-			srand((unsigned)time(NULL));
-			now_choose[0] = rand() % 3 + 1;//test
-			//向客户端传输第一个选的人
-			client[0]->write_some(buffer(now_choose));
-			client[1]->write_some(buffer(now_choose));
-			log("now choose=%d", now_choose[0]);
-			//目前的最高地主分
-			for (int i = 0; i <= 2; i++)
-			{
-				if (localplayer->playercode == now_choose[0])
+				if (!ishandsend)
 				{
-
-					while (true)
+					client[0]->write_some(buffer(b->hand));
+					client[1]->write_some(buffer(c->hand));
+					ishandsend = true;
+				}
+				boost::this_thread::sleep(boost::posix_time::millisec(100));
+				//选地主
+				srand((unsigned)time(NULL));
+				now_choose[0] = rand() % 3 + 1;//test
+				//向客户端传输第一个选的人
+				client[0]->write_some(buffer(now_choose));
+				client[1]->write_some(buffer(now_choose));
+				log("now choose=%d", now_choose[0]);
+				//目前的最高地主分
+				for (int i = 0; i <= 2; i++)
+				{
+					if (localplayer->playercode == now_choose[0])
 					{
-						if (localplayer->lord_point != -1)
+
+						while (true)
 						{
-							log("lord_point=%d", localplayer->lord_point);
-							char local_lordpoint[1];
-							local_lordpoint[0] = localplayer->lord_point;
-							client[0]->write_some(buffer(local_lordpoint));
-							client[1]->write_some(buffer(local_lordpoint));
-							if (local_lordpoint[0] > max_point)
+							if (localplayer->lord_point != -1)
 							{
-								max_point = local_lordpoint[0];
-								now_lord = now_choose[0];
+								log("lord_point=%d", localplayer->lord_point);
+								char local_lordpoint[1];
+								local_lordpoint[0] = localplayer->lord_point;
+								client[0]->write_some(buffer(local_lordpoint));
+								client[1]->write_some(buffer(local_lordpoint));
+								if (local_lordpoint[0] > max_point)
+								{
+									max_point = local_lordpoint[0];
+									now_lord = now_choose[0];
+								}
+								break;
 							}
-							break;
 						}
 					}
-				}
-				else
-				{
-					char remote_lordpoint[1];
-					client[now_choose[0] - 2]->read_some(buffer(remote_lordpoint));
-					//转发给另一个客户端玩家
-					client[3 - now_choose[0]]->write_some(buffer(remote_lordpoint));
-					if (remote_lordpoint[0] > max_point)
+					else
 					{
-						max_point = remote_lordpoint[0];
-						now_lord = now_choose[0];
+						char remote_lordpoint[1];
+						client[now_choose[0] - 2]->read_some(buffer(remote_lordpoint));
+						//转发给另一个客户端玩家
+						client[3 - now_choose[0]]->write_some(buffer(remote_lordpoint));
+						if (remote_lordpoint[0] > max_point)
+						{
+							max_point = remote_lordpoint[0];
+							now_lord = now_choose[0];
+						}
 					}
+					if (max_point == 3)
+					{
+						break;
+					}
+					now_choose[0]++;
+					now_choose[0] = now_choose[0] > 3 ? (now_choose[0] - 3) : now_choose[0];
 				}
-				if (max_point == 3)
-				{
-					break;
-				}
-				now_choose[0]++;
-				now_choose[0] = now_choose[0] > 3 ? (now_choose[0] - 3) : now_choose[0];
+				break;
 			}
-			break;
 		}
+	}
+	catch (boost::system::system_error e)
+	{
+		MessageBox("connection error", "wrong");
 	}
 	//将地主牌发给客户端玩家
 	vector<int>lord_poker;
@@ -258,46 +276,53 @@ void Server::DealAndSnatchlandlord_thread()
 
 void Server::Play()
 {
-	while (true)
+	try
 	{
-		if (isstart)
+		while (true)
 		{
-			now_play = now_lord;
-			localscene->isadded = 0;
-			//开始游戏
-			while (true)
+			if (isstart)
 			{
-				if (localplayer->playercode == now_play)
+				now_play = now_lord;
+				localscene->isadded = 0;
+				//开始游戏
+				while (true)
 				{
-					play_swith = true;
-					//等待点击
-					while (true)
+					if (localplayer->playercode == now_play)
 					{
-						//若点击给两个客户端发送数据包
-						if (localscene->isclick)
+						play_swith = true;
+						//等待点击
+						while (true)
 						{
-							if (datas->isplay_pokers)
+							//若点击给两个客户端发送数据包
+							if (localscene->isclick)
 							{
-								localscene->pokers_num[0] -= datas->card_amount;//减去自己的出牌
+								if (datas->isplay_pokers)
+								{
+									localscene->pokers_num[0] -= datas->card_amount;//减去自己的出牌
+								}
+								send_struct(client[0]);
+								send_struct(client[1]);
+								localscene->isclick = false;
+								now_play++;
+								now_play = now_play > 3 ? (now_play - 3) : now_play;
+								break;
 							}
-							send_struct(client[0]);
-							send_struct(client[1]);
-							localscene->isclick = false;
-							now_play++;
-							now_play = now_play > 3 ? (now_play - 3) : now_play;
-							break;
 						}
 					}
+					else
+					{
+						read_struct(client[now_play - 2]);
+						send_struct(client[3 - now_play]);
+						localscene->isrecv_struct = true;
+					}
+					boost::this_thread::sleep(boost::posix_time::millisec(500));
 				}
-				else
-				{
-					read_struct(client[now_play - 2]);
-					send_struct(client[3 - now_play]);
-					localscene->isrecv_struct = true;
-				}
-				boost::this_thread::sleep(boost::posix_time::millisec(500));
 			}
 		}
+	}
+	catch (boost::system::system_error e)
+	{
+		MessageBox("connection error", "wrong");
 	}
 }
 void Server::Play_thread()

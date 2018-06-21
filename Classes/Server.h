@@ -20,6 +20,7 @@ class Server
 {
 public:
 	Server(Player*local, GameScene* scene);
+	~Server();
 	friend class GameScene;
 	void CreateAccept();
 	void Accept_thread();

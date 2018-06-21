@@ -34,6 +34,11 @@ Client::Client(Player* local, GameScene* scene) :sock(service)
 	datas->card_type = 0;
 	datas->isplay_pokers = true;
 }
+Client::~Client()
+{
+	delete localplayer;
+	delete datas;
+}
 
 int Client::CreateConnect()
 {
@@ -99,12 +104,17 @@ void Client::ReadyMsg()
 			catch (boost::system::system_error e)
 			{
 				MessageBox("write", "wrong");
-				log("%d", e.code());
 			}
 			//读取服务器数据
 			char isready[1];
-			sock.read_some(buffer(isready));
-			log("isready=%d", isready[0]);
+			try
+			{
+				sock.read_some(buffer(isready));
+			}
+			catch (boost::system::system_error e)
+			{
+				MessageBox("read", "wrong");
+			}
 			if (isready[0])
 			{
 				isallready = true;
@@ -189,7 +199,7 @@ void Client::DealAndSnatchlandlord()
 	}
 	catch (boost::system::system_error e)
 	{
-		MessageBox("new", "wrong");
+		MessageBox("connection error", "wrong");
 		log("%d", e.code());
 	}
 }
@@ -200,45 +210,52 @@ void Client::DealAndSnatchlandlord_thread()
 
 void Client::Play()
 {
-	while (true)
+	try
 	{
-		if (isstart)
+		while (true)
 		{
-			log("is=%d", isstart);
-			now_play = now_lord;
-			localscene->isadded = 0;
-			//开始游戏
-			while (true)
+			if (isstart)
 			{
-				if (localplayer->playercode == now_play)
+				log("is=%d", isstart);
+				now_play = now_lord;
+				localscene->isadded = 0;
+				//开始游戏
+				while (true)
 				{
-					play_swith = true;
-					//等待点击
-					while (true)
+					if (localplayer->playercode == now_play)
 					{
-						if (localscene->isclick)
+						play_swith = true;
+						//等待点击
+						while (true)
 						{
-							if (datas->isplay_pokers)
+							if (localscene->isclick)
 							{
-								localscene->pokers_num[localplayer->playercode - 1] -= datas->card_amount;//减去自己的出牌
+								if (datas->isplay_pokers)
+								{
+									localscene->pokers_num[localplayer->playercode - 1] -= datas->card_amount;//减去自己的出牌
+								}
+								//发送数据给服务器
+								send_struct();
+								localscene->isclick = false;
+								now_play++;
+								now_play = now_play > 3 ? (now_play - 3) : now_play;
+								break;
 							}
-							//发送数据给服务器
-							send_struct();
-							localscene->isclick = false;
-							now_play++;
-							now_play = now_play > 3 ? (now_play - 3) : now_play;
-							break;
 						}
 					}
+					else
+					{
+						read_struct();
+						localscene->isrecv_struct = true;
+					}
+					boost::this_thread::sleep(boost::posix_time::millisec(500));
 				}
-				else
-				{
-					read_struct();
-					localscene->isrecv_struct = true;
-				}
-				boost::this_thread::sleep(boost::posix_time::millisec(500));
 			}
 		}
+	}
+	catch (boost::system::system_error e)
+	{
+		MessageBox("connection error", "wrong");
 	}
 }
 void Client::Play_thread()

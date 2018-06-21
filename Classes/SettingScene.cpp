@@ -12,6 +12,10 @@ bool SettingScene::init()
 	{
 		return false;
 	}
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto music = Sprite::create("music.png");
+	music->setPosition(visibleSize.width / 2 * 0.6, visibleSize.height / 2);
+	addChild(music);
 	ReturnButton();
 	BGMVolume();
 	return true;

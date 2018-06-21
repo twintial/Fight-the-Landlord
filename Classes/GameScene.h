@@ -10,6 +10,7 @@
 #include"Client.h"
 #include"Server.h"
 #include"PokerCard.h"
+#include"ChooseScene.h"
 #include"SimpleAudioEngine.h"
 using namespace std;
 using namespace ui;
@@ -33,6 +34,9 @@ public:
 	void ArrangePoker_lord(float t);
 	void ArrangeLordbutton(float t);
 	void SettingButton();
+
+	//void RestartButton();
+
 	void EnterSettingScene(Ref *pSender);
 	void LocalPlay(float t);
 	bool ArrangeOutPokers(Player*);

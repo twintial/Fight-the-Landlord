@@ -483,6 +483,7 @@ void GameScene::LocalPlay(float t)
 						addChild(win_logo);
 					}
 				}
+				//RestartButton();
 				this->unschedule(schedule_selector(GameScene::LocalPlay));
 			}
 		}
@@ -694,6 +695,7 @@ void GameScene::LocalPlay(float t)
 						addChild(win_logo);
 					}
 				}
+				//RestartButton();
 				this->unschedule(schedule_selector(GameScene::LocalPlay));
 			}
 		}
@@ -741,7 +743,21 @@ void GameScene::ReadyButton()
 	});
 	addChild(ready_button);
 }//在此scene中实现功能
-
+//void GameScene::RestartButton()
+//{
+//	auto visibleSize = Director::getInstance()->getVisibleSize();
+//	restart = Button::create("ready.png");
+//	restart->setPosition(Vec2(visibleSize.width / 2, 305));
+//	restart->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType type)
+//	{
+//		switch (type)
+//		{
+//		case Widget::TouchEventType::ENDED:
+//			Director::getInstance()->replaceScene(ChooseScene::CreateScene());
+//		}
+//	});
+//	addChild(restart);
+//}
 void GameScene::SettingButton()
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();

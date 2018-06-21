@@ -147,6 +147,9 @@ PokerCard::PokerCard(int num)
 		m_card_picture = Sprite::create("m_king_b.png");break;
 	}
 }
+PokerCard::~PokerCard()
+{
+}
 void PokerCard::ClickOut()const
 {
 	card_picture->runAction(MoveTo::create(0.1, Point(card_picture->getPositionX(), card_picture->getPositionY() + 28)));
@@ -184,7 +187,4 @@ void PokerCard::ClickTrigger()
 		listener->setSwallowTouches(false);
 	};
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, card_picture);
-}
-PokerCard::~PokerCard()
-{
 }

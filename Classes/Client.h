@@ -14,6 +14,7 @@ class Client
 {
 public:
 	Client(Player*local, GameScene* scene);
+	~Client();
 	friend class GameScene;
 	int CreateConnect();
 	void Connect_thread();

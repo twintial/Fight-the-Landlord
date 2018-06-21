@@ -19,6 +19,7 @@ public:
 	friend class Client;
 	friend class Server;
 	Player();
+	~Player();
 	Player &operator= (Player&);
 	void Action(Button*, Button*, play_data* ,GameScene*);
 private:

@@ -9,6 +9,7 @@ class PokerCard
 {
 public:
 	PokerCard(int num);
+	~PokerCard();
 	void ClickOut()const;
 	void ClickIn()const;
 	void ClickTrigger();
@@ -16,7 +17,6 @@ public:
 	friend class Operation;
 	friend class Player;
 	friend class Server;//
-	~PokerCard();
 private:
 	int num;
 	int card_number;

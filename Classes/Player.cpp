@@ -11,6 +11,10 @@ Player::Player()
 	isready = false;
 	isplay_pokers = false;//
 }
+Player::~Player()
+{
+
+}
 Player& Player::operator=(Player& x)
 {
 	return x;
