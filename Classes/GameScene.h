@@ -33,6 +33,10 @@ public:
 	void ArrangePoker_before(float t);
 	void ArrangePoker_lord(float t);
 	void ArrangeLordbutton(float t);
+
+	void TimePass(float t);
+	void TimePass_guest(float);
+
 	void SettingButton();
 
 	//void RestartButton();
@@ -44,6 +48,8 @@ public:
 	bool ArrangeOutPokers_remote_right(vector<PokerCard>&);
 	void ArrangeHandPokers_afterplay(Player* x);
 	void ClearOutPokers(vector<PokerCard>&);
+	void SetClock();
+
 	Button* PointButton_0();
 	Button* PointButton_1();
 	Button* PointButton_2();

@@ -17,6 +17,7 @@ Sprite* right_skip;
 LabelTTF* playing;//等待出牌
 LabelTTF* left_num;//左边的牌数显示
 LabelTTF* right_num;//右边的牌数显示
+LabelTTF* time_left;
 
 Scene* GameScene::CreateScene()
 {
@@ -365,6 +366,13 @@ void GameScene::LocalPlay(float t)
 				local_server->datas->card_type = 0;
 				lord_first_play = false;
 			}
+			else
+			{
+				//当默认出牌时出最小的（将添加
+				SetClock();
+				time_left->setPosition(visibleSize.width / 2, 305);
+				schedule(schedule_selector(GameScene::TimePass), 1);
+			}
 			local_server->play_swith = false;
 		}
 		else
@@ -372,17 +380,23 @@ void GameScene::LocalPlay(float t)
 			//添加waiting
 			if (isadded == 0)
 			{
-				playing = LabelTTF::create("waiting...", "arial", 30);
+				/*playing = LabelTTF::create("waiting...", "arial", 30);*/
 				if (local_server->now_play == 2)
 				{
-					playing->setPosition(1050, 600);
-					addChild(playing);
+					//playing->setPosition(1050, 600);
+					//addChild(playing);
+					SetClock();
+					time_left->setPosition(1050, 600);
+					schedule(schedule_selector(GameScene::TimePass_guest), 1);
 					isadded = 1;
 				}
 				else if (local_server->now_play == 3)
 				{
-					playing->setPosition(174, 600);
-					addChild(playing);
+					SetClock();
+					time_left->setPosition(174, 600);
+					schedule(schedule_selector(GameScene::TimePass_guest), 1);
+					//playing->setPosition(174, 600);
+					//addChild(playing);
 					isadded = 1;
 				}
 			}
@@ -443,7 +457,13 @@ void GameScene::LocalPlay(float t)
 				local_server->now_play++;
 				local_server->now_play = local_server->now_play > 3 ? (local_server->now_play - 3) : local_server->now_play;
 				//移除等待出牌
-				playing->removeFromParent();
+				/*playing->removeFromParent();*/
+				if (getChildByTag(30) != NULL)
+				{
+					this->unschedule(schedule_selector(GameScene::TimePass_guest));
+					boost::this_thread::sleep(boost::posix_time::millisec(50));
+					time_left->removeFromParent();
+				}
 				isadded = 0;
 			}
 		}
@@ -504,6 +524,13 @@ void GameScene::LocalPlay(float t)
 				local_client->datas->card_type = 0;
 				lord_first_play = false;
 			}
+			else
+			{
+				//
+				SetClock();
+				time_left->setPosition(visibleSize.width / 2, 305);
+				schedule(schedule_selector(GameScene::TimePass), 1);
+			}
 			local_client->play_swith = false;
 		}
 		else
@@ -516,14 +543,20 @@ void GameScene::LocalPlay(float t)
 				{
 					if (local_client->now_play == 1)
 					{
-						playing->setPosition(174, 600);
-						addChild(playing);
+						//playing->setPosition(174, 600);
+						//addChild(playing);
+						SetClock();
+						time_left->setPosition(174, 600);
+						schedule(schedule_selector(GameScene::TimePass_guest), 1);
 						isadded = 1;
 					}
 					else if (local_client->now_play == 3)
 					{
-						playing->setPosition(1050, 600);
-						addChild(playing);
+						//playing->setPosition(1050, 600);
+						//addChild(playing);
+						SetClock();
+						time_left->setPosition(1050, 600);
+						schedule(schedule_selector(GameScene::TimePass_guest), 1);
 						isadded = 1;
 					}
 				}
@@ -531,14 +564,20 @@ void GameScene::LocalPlay(float t)
 				{
 					if (local_client->now_play == 2)
 					{
-						playing->setPosition(174, 600);
-						addChild(playing);
+						//playing->setPosition(174, 600);
+						//addChild(playing);
+						SetClock();
+						time_left->setPosition(174, 600);
+						schedule(schedule_selector(GameScene::TimePass_guest), 1);
 						isadded = 1;
 					}
 					else if (local_client->now_play == 1)
 					{
-						playing->setPosition(1050, 600);
-						addChild(playing);
+						//playing->setPosition(1050, 600);
+						//addChild(playing);
+						SetClock();
+						time_left->setPosition(1050, 600);
+						schedule(schedule_selector(GameScene::TimePass_guest), 1);
 						isadded = 1;
 					}
 				}
@@ -655,7 +694,13 @@ void GameScene::LocalPlay(float t)
 				local_client->now_play++;
 				local_client->now_play = local_client->now_play > 3 ? (local_client->now_play - 3) : local_client->now_play;
 				//移除等待出牌
-				playing->removeFromParent();
+				//playing->removeFromParent();
+				if (getChildByTag(30) != NULL)
+				{
+					this->unschedule(schedule_selector(GameScene::TimePass_guest));
+					boost::this_thread::sleep(boost::posix_time::millisec(50));
+					time_left->removeFromParent();
+				}
 				isadded = 0;
 			}
 		}
@@ -699,6 +744,65 @@ void GameScene::LocalPlay(float t)
 				this->unschedule(schedule_selector(GameScene::LocalPlay));
 			}
 		}
+	}
+}
+
+void GameScene::TimePass(float t)
+{
+	if (getChildByTag(30) == NULL)
+	{
+		this->unschedule(schedule_selector(GameScene::TimePass));
+	}
+	int left = stoi(time_left->getString());
+	left--;
+	time_left->setString(to_string(left));
+	if (left <= 0)//需修改
+	{
+		//做不出的事情
+
+		skip->removeFromParent();
+		play->removeFromParent();
+		//表明不出牌
+		if (LoginScene::state)
+		{
+			local_server->datas->isplay_pokers = false;
+		}
+		else
+		{
+			local_client->datas->isplay_pokers = false;
+		}
+		local->local_skip = Sprite::create("skip.png");
+		local->local_skip->setTag(3);
+		local->local_skip->setPosition(612, 320);
+		addChild(local->local_skip);
+		//使牌移回
+		for (int i = 0; i <= local->handpoker.size() - 1; i++)
+		{
+			if (local->handpoker[i].iostates == 1 && local->handpoker[i].played == 0)
+			{
+				local->handpoker[i].card_picture->runAction(MoveTo::create(0.01, Point(local->handpoker[i].card_picture->getPositionX(), local->handpoker[i].card_picture->getPositionY() - 28)));
+				local->handpoker[i].iostates = 0;
+			}
+		}
+		isclick = true;
+
+		time_left->removeFromParent();
+		this->unschedule(schedule_selector(GameScene::TimePass));
+	}
+}
+void GameScene::TimePass_guest(float t)
+{
+	if (getChildByTag(30) == NULL)
+	{
+		this->unschedule(schedule_selector(GameScene::TimePass_guest));
+	}
+	int left = stoi(time_left->getString());
+	left--;
+	time_left->setString(to_string(left));
+	if (left <= 0 && getChildByTag(30) != NULL)
+	{
+		time_left->removeFromParent();
+		this->unschedule(schedule_selector(GameScene::TimePass_guest));
 	}
 }
 
@@ -1033,4 +1137,10 @@ void GameScene::ClearOutPokers(vector<PokerCard> &outpokers)
 		}
 		outpokers.erase(outpokers.begin(), outpokers.end());
 	}
+}
+void GameScene::SetClock()
+{
+	time_left = LabelTTF::create("10", "arial", 30);
+	time_left->setTag(30);
+	addChild(time_left);
 }

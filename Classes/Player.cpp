@@ -49,6 +49,12 @@ void Player::Action(Button* skipbutton, Button* playbutton, play_data* datas, Ga
 					this->handpoker[i].iostates = 0;
 				}
 			}
+			//去除计时器
+			if (scene->getChildByTag(30) != NULL)
+			{
+				scene->removeChildByTag(30, true);
+				scene->unschedule(schedule_selector(GameScene::TimePass));
+			}
 			scene->isclick = true;
 			break;
 		default:
@@ -97,6 +103,12 @@ void Player::Action(Button* skipbutton, Button* playbutton, play_data* datas, Ga
 				for (int i = 0; i <= this->outpoker.size() - 1; i++)
 				{
 					datas->out_poker[i] = this->outpoker[i].num;
+				}
+				//去除计时器
+				if (scene->getChildByTag(30) != NULL)
+				{
+					scene->removeChildByTag(30, true);
+					scene->unschedule(schedule_selector(GameScene::TimePass));
 				}
 				scene->isclick = true;
 			}
