@@ -55,6 +55,11 @@ void Player::Action(Button* skipbutton, Button* playbutton, play_data* datas, Ga
 				scene->removeChildByTag(30, true);
 				scene->unschedule(schedule_selector(GameScene::TimePass));
 			}
+			//去除计时器背景
+			if (scene->getChildByTag(31) != NULL)
+			{
+				scene->removeChildByTag(31, true);
+			}
 			scene->isclick = true;
 			break;
 		default:
@@ -67,11 +72,10 @@ void Player::Action(Button* skipbutton, Button* playbutton, play_data* datas, Ga
 		switch (type)
 		{
 		case cocos2d::ui::Widget::TouchEventType::ENDED:
-			////如果之前的outpoker还没删除，删除
-			//if (this->outpoker.size() != 0)
-			//{
-			//	this->outpoker.erase(this->outpoker.begin(), this->outpoker.end());
-			//}
+			if (scene->lord_first_play)
+			{
+				scene->lord_first_play = false;
+			}
 			for (int i = 0; i <= this->handpoker.size() - 1; i++)
 			{
 				if (this->handpoker[i].iostates == 1 && this->handpoker[i].played == 0)
@@ -109,6 +113,11 @@ void Player::Action(Button* skipbutton, Button* playbutton, play_data* datas, Ga
 				{
 					scene->removeChildByTag(30, true);
 					scene->unschedule(schedule_selector(GameScene::TimePass));
+				}
+				//去除计时器背景
+				if (scene->getChildByTag(31) != NULL)
+				{
+					scene->removeChildByTag(31, true);
 				}
 				scene->isclick = true;
 			}
